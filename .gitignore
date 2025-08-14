@@ -1,0 +1,5 @@
+node_modules/
+web/.next/
+web/.env
+web/.env.local
+pgdata/
