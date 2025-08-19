@@ -13,19 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id          String   @id @default(cuid())  // DB内のPK
-  firebaseUid String   @unique               // Firebase UID
+  id          String   @id @default(cuid()) // DB内のPK
+  firebaseUid String   @unique // Firebase UID
   email       String   @unique
   name        String?
   locale      String   @default("ja")
   createdAt   DateTime @default(now())
 }
+
 model Word {
   id        String   @id @default(cuid())
-  lang      String   // 'ja' | 'ko'
-  surface   String   // 단어 표기
+  lang      String // 'ja' | 'ko'
+  surface   String // 단어 표기
   meaning   String
   tags      String[] @default([])
   createdAt DateTime @default(now())

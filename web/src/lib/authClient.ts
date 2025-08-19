@@ -9,18 +9,13 @@ import {
 
 
 export const signUpWithEmail = async (email: string, password: string) => {
-    try {
-
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        return {
-            email: user.email,
-            uid: user.uid,
-        };
-    } catch (error) {
-        console.error("Error signing up:", error);
-        throw error;
-    }
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const token = await getIdToken(userCredential.user);
+    return { 
+        email: userCredential.user.email, 
+        uid: userCredential.user.uid, 
+        token 
+    };
 }
 
 export const signInWithEmail = async (email: string, password: string) => {

@@ -31,11 +31,10 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      const user = await signUpWithEmail(form.email, form.password);
+      const {uid, token} = await signUpWithEmail(form.email, form.password);
 
       const current = auth.currentUser;
       if (!current) throw new Error("회원 가입 직후 사용자 세션이 설정되지 않았습니다.");
-      const token = await current.getIdToken(true);
 
       const response = await fetch("/api/join", {
         method: "POST",
@@ -46,11 +45,11 @@ export default function RegisterPage() {
         body: JSON.stringify({
           email: form.email,
           name: form.name,
-          firebaseUid: user.uid,
+          firebaseUid: uid,
         }),
       });
-
       const data = await response.json();
+      console.log(data);
 
       if (!response.ok) {
         setMsg(data?.error ? `Join 실패: ${data.error}` : "Join 실패: 알 수 없는 오류");
