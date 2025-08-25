@@ -28,6 +28,12 @@ export default function LoginPage() {
       credentials: "include", // Set-Cookie 
       body: JSON.stringify({ idToken }),
     });
+
+    await fetch("/api/users/sync", {
+    method: "POST",
+    credentials: "include",
+  });
+  
     if (!res.ok) {
       throw new Error("Failed to issue session.");
     }
