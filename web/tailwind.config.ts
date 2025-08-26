@@ -27,6 +27,7 @@ const config: Config = {
       sky:   { 100:"#ecf7ff", 300:"#cfeaff", 500:"#8fd0ff" },
       lemon: { 100:"#fffbe6", 300:"#fff0a6", 500:"#ffe266" },
       berry: { 100:"#ffe8f1", 300:"#ffc2d8", 500:"#ff8fb7" },
+      pink:  { 100:"#ffe4f1", 300:"#ffb3d8", 500:"#ff80bf" },
     },
     borderRadius: {
       'kids': '1.25rem', // 20px
@@ -41,6 +42,13 @@ const config: Config = {
       'kid-xl': ['1.5rem',   { lineHeight: '1.25'}], // 24px
       'kid-2xl':['1.75rem',  { lineHeight: '1.2'  }],// 28px
     },
+    fontFamily: {
+        baloo: ["var(--font-baloo)", "cursive"],   // 영어 타이틀 (이미 있는 거)
+        noto: ["var(--font-noto)", "sans-serif"],  // 일반 본문
+        hachi: ["var(--font-hachi)", "cursive"],   // (둥근/팝)
+        kaisei: ["var(--font-kaisei)", "serif"],   // (세리프)
+        yomogi: ["var(--font-yomogi)", "cursive"], // (손글씨)
+      },
     transitionDuration: { kids: '180ms' },
     scale: { '98': '.98', '102': '1.02' },
   }
