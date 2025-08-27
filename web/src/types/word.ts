@@ -1,9 +1,21 @@
 
+export type WordStatus = "draft" | "published";
+
+export interface ImageMeta {
+  id: string;
+  imageUrl: string;       // Firebase Storage URL
+  storagePath: string;
+  contentType?: string;
+  createdAt: string;      // ISO string (API로 받을 때)
+}
 
 export type Word = {
   id: string;
   jaSurface : string,
   koSurface : string,
   tags: string[];
-  updatedAt: Date; // ISO 문자열로 클라에 전달
+  status: WordStatus;
+  updatedAt: Date, // ISO 문자열로 클라에 전달
+  image?: ImageMeta | null;
+  userId: string,
 }
