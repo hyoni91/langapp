@@ -14,21 +14,63 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid()) // DB内のPK
-  firebaseUid String   @unique // Firebase UID
+  id          String   @id @default(cuid())  // DB内のPK（そのまま）
+  firebaseUid String   @unique               // Firebase UID
   email       String   @unique
   name        String?
   locale      String   @default("ja")
   createdAt   DateTime @default(now())
+
+  // 소유 관계
+  words       Word[]
+  images      Image[]
+
+  @@index([firebaseUid])
+
 }
+
+model Image {
+  id           String   @id @default(cuid())
+  imageUrl     String                 // Firebase Storage 다운로드 URL
+  storagePath  String   @unique        // 동일 경로 중복 방지 ,images/{uid}/{cuid}.jpg
+  contentType  String?
+  createdAt    DateTime @default(now())
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Word와 1:1 (Word.imageId가 unique라서 결과적으로 1:1)
+  word         Word?
+}
+
+// 사진 임의 저장
+enum WordStatus {
+  draft
+  published
+}
+
 
 model Word {
-  id        String   @id @default(cuid())
-  lang      String // 'ja' | 'ko'
-  surface   String // 단어 표기
-  meaning   String
-  tags      String[] @default([])
-  createdAt DateTime @default(now())
+  id        String     @id @default(cuid())
+  koSurface   String
+  jaSurface   String
+  tags      String[]   @default([])
+  status    WordStatus @default(draft)
+  createdAt DateTime   @default(now())
 
-  @@index([lang, surface])
+  // 대표 이미지 (draft일 땐 없어도 되고, published 전환 시 필수)
+  imageId   String?  @unique
+  image     Image?   @relation(fields: [imageId], references: [id])
+
+  // 소유자
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  // 유저별 중복 방지
+  @@unique([userId, jaSurface])
+  @@unique([userId, koSurface])
+  
+
+  @@index([userId, status, createdAt])
 }
+
