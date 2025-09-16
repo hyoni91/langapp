@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 
 import { KidButton } from "@/components/ui/KidButton";
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
+import { getDashboardData } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
@@ -13,6 +14,8 @@ export default async function DashboardPage() {
     where: { firebaseUid: decoded.uid },
     select: { name: true, email: true, createdAt: true },
   });
+
+  const kpi = await getDashboardData(decoded.uid, "ja");
 
   // 최초 로그인 직후 sync 전에 올 수 있음 → 안전 처리
   if (!user) {
@@ -53,16 +56,17 @@ export default async function DashboardPage() {
       <section aria-labelledby="today" className="text-center space-y-2">
         <h2 id="today" className="text-kid-xl font-semibold">今日の学習</h2>
         <ul className="text-kid-lg space-y-1">
-          <li>今日の単語学習: {todayWords}語</li>
-          <li>今日の学習時間: {todayMinutes}分</li>
+          <li>今日の単語学習: {kpi.today.wordCount}語</li>
+          <li>今日の学習時間: {kpi.today.label}</li>
         </ul>
       </section>
 
       <section aria-labelledby="total" className="text-center space-y-2">
         <h2 id="total" className="text-kid-xl font-semibold">累計の学習</h2>
         <ul className="text-kid-lg space-y-1">
-          <li>累計単語学習: {totalWords}語</li>
-          <li>累計学習時間: {totalMinutes}分</li>
+          <li>総学習時間（当月）: {kpi.monthly.label}</li>
+          <li>累計単語学習: {kpi.total.wordCount}語</li>
+          <li>累計学習時間: {kpi.total.label}</li>
         </ul>
       </section>
 

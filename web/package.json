@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pr:fmt" : "prisma format",
+    "pr:gen" : "prisma generate",
+    "pr:check": "prisma db pull && prisma validate",
+    "pr:mig": "prisma migrate dev",
+    "pr:st": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
