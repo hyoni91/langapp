@@ -4,10 +4,12 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 
+
+
+
 // 자동 시작 API
 // 1. 유저 인증 2. 유저 정보 가져오기 3. 진행 중 세션이 있으면 이어서, 없으면 새로 시작
 // 4. 세션 제한 시간 가져오기 (없으면 기본 20분) 5. 응답으로 세션 정보 반환
-
 export async function POST(req : NextRequest){
    const cookieStore = await cookies();
    const session = cookieStore.get("session")?.value;

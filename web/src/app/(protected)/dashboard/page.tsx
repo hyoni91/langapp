@@ -72,7 +72,7 @@ export default async function DashboardPage() {
 
       <section aria-labelledby="alarm" className="text-center space-y-2">
         <h2 id="alarm" className="text-kid-xl font-semibold">アラーム設定</h2>
-        <p className="text-kid-lg text-gray-700">1日の学習時間を設定できます。</p>
+        <p className="text-kid-lg text-gray-700">学習時間を設定できます。</p>
         <div className="flex items-center justify-center gap-3 text-kid-lg">
           <div className="rounded-kids bg-lemon-100 px-4 py-2 shadow-soft">30分</div>
           <button type="button" className="underline text-brand-600 hover:opacity-80">
