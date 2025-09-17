@@ -1,6 +1,7 @@
 // app/(protected)/dashboard/page.tsx
 export const runtime = "nodejs";
 
+import SettingTimer from "@/components/timer/SettingTimer";
 import { KidButton } from "@/components/ui/KidButton";
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { getDashboardData } from "@/lib/dashboard";
@@ -17,6 +18,7 @@ export default async function DashboardPage() {
 
   const kpi = await getDashboardData(decoded.uid, "ja");
 
+
   // 최초 로그인 직후 sync 전에 올 수 있음 → 안전 처리
   if (!user) {
     return (
@@ -26,7 +28,7 @@ export default async function DashboardPage() {
           初期設定を準備しています。数秒後に再読み込みしてください。
         </p>
         <KidButton asChild>
-            <Link href="/">홈으로</Link>
+            <Link href="/">ホームに戻る</Link>
         </KidButton>
       </main>
     );
@@ -36,12 +38,6 @@ export default async function DashboardPage() {
     ? user.createdAt.toLocaleDateString("ja-JP")
     : "-";
 
-  // database에서--->아래 값들은 임시 값. 학습 기록 테이블에서 가져오도록
-  const todayWords = 12;
-  const todayMinutes = 20;
-
-  const totalWords = 12;
-  const totalMinutes = 20;
 
   return (
      <main className="min-h-screen max-w-md mx-auto px-4 py-10 flex flex-col space-y-8">
@@ -72,13 +68,9 @@ export default async function DashboardPage() {
 
       <section aria-labelledby="alarm" className="text-center space-y-2">
         <h2 id="alarm" className="text-kid-xl font-semibold">アラーム設定</h2>
-        <p className="text-kid-lg text-gray-700">学習時間を設定できます。</p>
-        <div className="flex items-center justify-center gap-3 text-kid-lg">
-          <div className="rounded-kids bg-lemon-100 px-4 py-2 shadow-soft">30分</div>
-          <button type="button" className="underline text-brand-600 hover:opacity-80">
-            変更
-          </button>
-        </div>
+
+        <SettingTimer />
+
       </section>
 
       <section aria-labelledby="actions" className="flex justify-center gap-3 text-kid-lg">

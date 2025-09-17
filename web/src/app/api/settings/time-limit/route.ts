@@ -18,7 +18,8 @@ async function getUser(){
     const { uid } = decoded;
     
     const user = await prisma.user.findUnique({
-        where: { firebaseUid : uid }
+        where: { firebaseUid : uid },
+        select: { id: true, firebaseUid: true },
     });
     if (!user) throw new Error("no user");
     return user;
