@@ -19,16 +19,20 @@ export default function StudyStartButton({
   labelPause = "一時停止",
   labelReset = "リセット",
 }: Props) {
-  const { status, start, pause, reset } = useTimer();
+  const { status, start, pause, reset, resume } = useTimer();
   const router = useRouter();
 
   if (status !== "running") {
     return (
+        
       <button
         className={className}
         onClick={() => {
-          start();                // ← 여기서만 시작
-          if (redirectTo) router.push(redirectTo);
+            if (status === "idle"){
+                 start();
+            } else if (status === "paused") resume();
+
+              if (redirectTo) router.push(redirectTo);
         }}
       >
         {labelStart}
