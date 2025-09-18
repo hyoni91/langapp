@@ -13,7 +13,14 @@ export default function AutoStarter(){
         let alive = true;
         (async()=>{
             try{
-                const res = await fetch("/api/timer/auto-start");
+                const res = await fetch("/api/sessions/auto-start",{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ }),
+                });
+                if(!res.ok) throw new Error("failed to fetch" );
                 const j = await res.json();
                 const minutes = Number(j.minutesPerSession ?? 20);
                 if(!alive) return;
