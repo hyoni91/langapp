@@ -1,3 +1,5 @@
+//삭제예정 TimerProvider로 대체
+
 "use client";
 
 import { useCountdownInterval } from "@/hooks/useCountdownInterval";
