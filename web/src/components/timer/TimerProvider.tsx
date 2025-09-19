@@ -49,7 +49,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
             if (startAtRef.current == null) return;
 
             const now = performance.now();
-            const elapsed = now - startAtRef.current - pausedAccumRef.current;
+            const elapsed = (now - startAtRef.current) + pausedAccumRef.current;
             const newRemaining = Math.max(durationMs - elapsed, 0); // 남은 시간 계산
 
             setRemainingMs(newRemaining);
@@ -105,24 +105,19 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
         if (status !== "running") return;
         const now = performance.now(); // 정확한 시간 측정을 위해 performance.now() 사용
         if (startAtRef.current != null) {
-        // 현재까지의 경과를 반영하여 remaining 업데이트
-        const elapsed = now - startAtRef.current - pausedAccumRef.current;
-         const left = Math.max(0, durationMs - elapsed);
-        setRemainingMs(left);
-         // 이후 재개 시점을 위해 누적 보정 갱신
-        pausedAccumRef.current = durationMs - left; // == 총 경과시간
-        }
+        const elapsedSinceStart = now - startAtRef.current; // 이번 start~지금까지
+        pausedAccumRef.current += elapsedSinceStart;        // 총 경과시간에 누적
+        const left = Math.max(0, durationMs - pausedAccumRef.current);
+        setRemainingMs(left);      
+    }
         setStatus("paused");
     };
 
 
     const resume = () => {
-        if (status !== "paused" || pausedAccumRef.current == null || startAtRef.current == null) return;
-
-        if (startAtRef.current == null) startAtRef.current = performance.now(); // 안전장치
-        pausedAccumRef.current = durationMs - remainingMs;
+        if (status !== "paused") return;
+        startAtRef.current = performance.now(); // 재개 시점만 새로 기록
         setStatus("running");
-
     };
 
     const reset = () => {
