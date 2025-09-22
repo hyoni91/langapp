@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,63 +8,102 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())  // DB内のPK（そのまま）
-  firebaseUid String   @unique               // Firebase UID
-  email       String   @unique
-  name        String?
-  locale      String   @default("ja")
-  createdAt   DateTime @default(now())
-
-  // 소유 관계
-  words       Word[]
-  images      Image[]
+  id               String            @id @default(cuid())
+  email            String            @unique
+  name             String?
+  locale           String            @default("ja")
+  createdAt        DateTime          @default(now())
+  firebaseUid      String            @unique
+  images           Image[]
+  timeLimitSetting TimeLimitSetting?
+  events           StudyEvent[]
+  sessions         StudySession[]
+  words            Word[]
 
   @@index([firebaseUid])
-
 }
 
 model Image {
-  id           String   @id @default(cuid())
-  imageUrl     String                 // Firebase Storage 다운로드 URL
-  storagePath  String   @unique        // 동일 경로 중복 방지 ,images/{uid}/{cuid}.jpg
-  contentType  String?
-  createdAt    DateTime @default(now())
+  id          String   @id @default(cuid())
+  imageUrl    String
+  storagePath String   @unique
+  contentType String?
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Word와 1:1 (Word.imageId가 unique라서 결과적으로 1:1)
-  word         Word?
+  word Word?
 }
 
-// 사진 임의 저장
+model Word {
+  id        String     @id @default(cuid())
+  tags      String[]   @default([])
+  createdAt DateTime   @default(now())
+  jaSurface String
+  koSurface String
+  imageId   String?    @unique
+  status    WordStatus @default(draft)
+  userId    String
+
+  studyEvent StudyEvent[]
+  image      Image?       @relation(fields: [imageId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jaSurface])
+  @@unique([userId, koSurface])
+  @@index([userId, status, createdAt])
+}
+
+model StudySession {
+  id          String    @id @default(cuid())
+  userId      String
+  startedAt   DateTime
+  endedAt     DateTime?
+  durationSec Int?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
+}
+
+model StudyEvent {
+  id             String      @id @default(cuid())
+  userId         String
+  wordId         String
+  action         StudyAction
+  lang           Lang
+  selectedWordId String?
+  responseMs     Int?
+  createdAt      DateTime    @default(now())
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word           Word        @relation(fields: [wordId], references: [id], onDelete: Cascade)
+}
+
+model TimeLimitSetting {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  minutesPerSession Int      @default(20) //「20分」デフォルト
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+}
+
 enum WordStatus {
   draft
   published
 }
 
-
-model Word {
-  id        String     @id @default(cuid())
-  koSurface   String
-  jaSurface   String
-  tags      String[]   @default([])
-  status    WordStatus @default(draft)
-  createdAt DateTime   @default(now())
-
-  // 대표 이미지 (draft일 땐 없어도 되고, published 전환 시 필수)
-  imageId   String?  @unique
-  image     Image?   @relation(fields: [imageId], references: [id])
-
-  // 소유자
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  // 유저별 중복 방지
-  @@unique([userId, jaSurface])
-  @@unique([userId, koSurface])
-  
-
-  @@index([userId, status, createdAt])
+enum StudyAction {
+  open
+  tts
+  quiz_start
+  quiz_answer_ok
+  quiz_answer_ng
+  quiz_end
 }
 
+enum Lang {
+  ja
+  ko
+}
