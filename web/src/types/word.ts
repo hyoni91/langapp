@@ -19,3 +19,11 @@ export type Word = {
   image?: ImageMeta | null;
   userId: string,
 }
+
+
+// 포스팅용
+export type WordEditor = {
+  jaSurface : string;
+  koSurface : string;
+  status : WordStatus;
+}
