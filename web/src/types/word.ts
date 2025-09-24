@@ -26,4 +26,7 @@ export type WordEditor = {
   jaSurface : string;
   koSurface : string;
   status : WordStatus;
+  imageFile?: File; // 업로드 전, 프론트에서만 사용
+  imageUrl?: string; // 업로드後 Firebase のURL  storagePath : string;
+  contentType : string;
 }
