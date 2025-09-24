@@ -1,5 +1,6 @@
 "use client"
 
+import { WordForm } from "@/types/word";
 import { useState } from "react"
 
 type props ={
@@ -13,14 +14,28 @@ export default function WordEditor({wordId}:props){
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
+    const [form, setForm] = useState<WordForm>({
+        jaSurface: "",
+        koSurface: "",
+        imageFile: null,
+        preview:null,
+    })
+
+    const handleChange = (key: "jaSurface" | "koSurface", value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    };
+
     //파일 선택
-    const handleFileChange = (e : React.ChangeEvent<HTMLInputElement>)=>{
-        const file = e.target.files?.[0] || null;
-        setImageFile(file);
-        if(file){
-            setPreview(URL.createObjectURL(file)); //미리보기용
-        }
-    };;
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (!file) return;
+
+    setForm((prev) => ({
+      ...prev,
+      imageFile: file,
+      preview: URL.createObjectURL(file), // 미리보기
+    }));
+  };
 
     //저장
     const handleSave = async()=>{
@@ -34,19 +49,19 @@ export default function WordEditor({wordId}:props){
         const storagePath = "";
         const contentType = imageFile.type;
 
-        // 2. API호출
-        const res = await fetch(`api/words/${wordId || "new"}`,{
-            method : "POST",
-            headers : {"Content-Type" : "application/json"},
-            body :JSON.stringify({
-                jaSurface: jar,
-                koSurface: kor,
-                imageUrl,
-                storagePath,
-                contentType
-            }),
+        // 2. API 호출
+        const res = await fetch(`/api/words/${wordId || "new"}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jaSurface: form.jaSurface,
+            koSurface: form.koSurface,
+            imageUrl,
+            storagePath,
+            contentType,
+        }),
         });
-
+        
         if(!res){
             alert("保存できませんでした。")
             return;
