@@ -2,9 +2,12 @@
 
 import { useState } from "react"
 
+type props ={
+    wordId : string;
+}
 
 
-export default function WordEditor(){
+export default function WordEditor({wordId}:props){
     const [kor, setKor] = useState("");
     const [jar, setJar] = useState("");
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -27,6 +30,31 @@ export default function WordEditor(){
         }
 
         // 1. Firebase Storage 업로드 (여기는 나중에 구현)
+        const imageUrl = "";
+        const storagePath = "";
+        const contentType = imageFile.type;
+
+        // 2. API호출
+        const res = await fetch(`api/words/${wordId || "new"}`,{
+            method : "POST",
+            headers : {"Content-Type" : "application/json"},
+            body :JSON.stringify({
+                jaSurface: jar,
+                koSurface: kor,
+                imageUrl,
+                storagePath,
+                contentType
+            }),
+        });
+
+        if(!res){
+            alert("保存できませんでした。")
+            return;
+        }
+
+        const data = await res.json();
+        console.log("保存成功:", data);
+        alert("保存しました！");
     }
 
 
