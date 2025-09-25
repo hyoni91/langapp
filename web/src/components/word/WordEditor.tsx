@@ -3,16 +3,15 @@
 import { WordForm } from "@/types/word";
 import { useState } from "react"
 
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebaseClient";
+
 type props ={
     wordId : string;
 }
 
 
 export default function WordEditor({wordId}:props){
-    const [kor, setKor] = useState("");
-    const [jar, setJar] = useState("");
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [preview, setPreview] = useState<string | null>(null);
 
     const [form, setForm] = useState<WordForm>({
         jaSurface: "",
@@ -39,15 +38,24 @@ export default function WordEditor({wordId}:props){
 
     //저장
     const handleSave = async()=>{
-        if(!imageFile){
-            alert("画像を選択してくださ");
+        if(!form.imageFile){
+            alert("画像を選択してください。");
             return;
         }
 
-        // 1. Firebase Storage 업로드 (여기는 나중에 구현)
-        const imageUrl = "";
-        const storagePath = "";
-        const contentType = imageFile.type;
+        // 1-1. Firebase Storage 업로드 
+        const storagePath = `images/${form.imageFile.name}-${Date.now()}`;
+        const storageRef = ref(storage, storagePath);
+
+        await uploadBytes (storageRef, form.imageFile, {
+            contentType : form.imageFile.type,
+        })
+
+        //1-2. download url 얻기
+        const imageUrl = await getDownloadURL(storageRef);
+
+        console.log("✅ 업로드 성공:", { storagePath, imageUrl });
+
 
         // 2. API 호출
         const res = await fetch(`/api/words/${wordId || "new"}`, {
@@ -58,10 +66,10 @@ export default function WordEditor({wordId}:props){
             koSurface: form.koSurface,
             imageUrl,
             storagePath,
-            contentType,
+            contentType : form.imageFile.type,
         }),
         });
-        
+
         if(!res){
             alert("保存できませんでした。")
             return;
@@ -75,7 +83,33 @@ export default function WordEditor({wordId}:props){
 
 
     return(
-        <>
-        </>
-    )
-}
+        <div>
+            <div>
+                <label>日本語:</label>
+                <input
+                type="text"
+                value={form.jaSurface}
+                onChange={(e) => handleChange("jaSurface", e.target.value)}
+                />
+            </div>
+
+            <div>
+                <label>韓国語:</label>
+                <input
+                type="text"
+                value={form.koSurface}
+                onChange={(e) => handleChange("koSurface", e.target.value)}
+                />
+            </div>
+
+            <div>
+                <label>画像アップロード:</label>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+                {form.preview && <img src={form.preview} alt="preview" width={200} />}
+            </div>
+
+            <button onClick={handleSave}>保存</button>
+            </div>
+  );
+
+  }
