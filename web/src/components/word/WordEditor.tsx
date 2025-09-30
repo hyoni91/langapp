@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { WordForm } from "@/types/word";
@@ -81,32 +82,73 @@ export default function WordEditor({wordId}:props){
 
 
     return(
-        <div>
-            <div>
-                <label>画像アップロード:</label>
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-                {form.preview && <img src={form.preview} alt="preview" width={200} />}
-            </div>
-            <div>
-                <label>日本語:</label>
-                <input
-                type="text"
-                value={form.jaSurface}
-                onChange={(e) => handleChange("jaSurface", e.target.value)}
-                />
-            </div>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md space-y-6">
+      {/* 이미지 업로드 */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          画像アップロード
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full text-sm text-gray-600
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-lg file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-blue-50 file:text-blue-700
+                     hover:file:bg-blue-100"
+        />
+        <div className="mt-3">
+          {/* 업로드 미리보기 */}
+          <img
+            src={form.preview ?? undefined}
+            alt="preview"
+            width={400}
+            className="rounded-lg border object-cover w-48 h-32"
+          />
+        </div>
+      </div>
 
-            <div>
-                <label>韓国語:</label>
-                <input
-                type="text"
-                value={form.koSurface}
-                onChange={(e) => handleChange("koSurface", e.target.value)}
-                />
-            </div>
+      {/* 일본어 입력 */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          日本語
+        </label>
+        <input
+          type="text"
+          value={form.jaSurface}
+          onChange={(e)=>handleChange("jaSurface", e.target.value)}
+          className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          placeholder="日本語を入力"
+        />
+      </div>
 
-            <button onClick={handleSave}>保存</button>
-            </div>
+      {/* 한국어 입력 */}
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          韓国語
+        </label>
+        <input
+          type="text"
+          value={form.koSurface}
+          onChange={(e)=>{handleChange("koSurface",e.target.value)}}
+          className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+          placeholder="한국어를 입력"
+        />
+      </div>
+
+      {/* 저장 버튼 */}
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="px-6 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+        >
+          保存
+        </button>
+      </div>
+    </div>
   );
 
   }
