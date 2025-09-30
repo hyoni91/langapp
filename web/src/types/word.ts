@@ -19,3 +19,12 @@ export type Word = {
   image?: ImageMeta | null;
   userId: string,
 }
+
+
+// 포스팅용
+export type WordForm = {
+  jaSurface: string;
+  koSurface: string;
+  imageFile: File | null;
+  preview: string | null;
+};
