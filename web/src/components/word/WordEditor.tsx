@@ -2,14 +2,12 @@
 
 import { WordForm } from "@/types/word";
 import { useState } from "react"
-
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebaseClient";
 
 type props ={
     wordId : string;
 }
-
 
 export default function WordEditor({wordId}:props){
 
@@ -85,6 +83,11 @@ export default function WordEditor({wordId}:props){
     return(
         <div>
             <div>
+                <label>画像アップロード:</label>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+                {form.preview && <img src={form.preview} alt="preview" width={200} />}
+            </div>
+            <div>
                 <label>日本語:</label>
                 <input
                 type="text"
@@ -100,12 +103,6 @@ export default function WordEditor({wordId}:props){
                 value={form.koSurface}
                 onChange={(e) => handleChange("koSurface", e.target.value)}
                 />
-            </div>
-
-            <div>
-                <label>画像アップロード:</label>
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-                {form.preview && <img src={form.preview} alt="preview" width={200} />}
             </div>
 
             <button onClick={handleSave}>保存</button>
