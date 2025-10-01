@@ -5,12 +5,16 @@ import { WordForm } from "@/types/word";
 import { useState } from "react"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebaseClient";
+import { useUser } from "@/context/UserContext";
 
 type props ={
     wordId : string;
 }
 
 export default function WordEditor({wordId}:props){
+
+  //React의 Hook(useState, useEffect 등)은 컴포넌트 최상위에서만 호출 가능
+    const {uid} = useUser();
 
     const [form, setForm] = useState<WordForm>({
         jaSurface: "",
@@ -41,10 +45,11 @@ export default function WordEditor({wordId}:props){
             alert("画像を選択してください。");
             return;
         }
-
-        // 1-1. Firebase Storage 업로드 
-        const storagePath = `images/${form.imageFile.name}-${Date.now()}`;
+        // 1-1. Firebase Storage 업로드
+        // 🔑 uid 기반 저장 경로
+        const storagePath = `user_uploads/${uid}/${form.imageFile.name}-${Date.now()}`;
         const storageRef = ref(storage, storagePath);
+
 
         await uploadBytes (storageRef, form.imageFile, {
             contentType : form.imageFile.type,
@@ -69,7 +74,7 @@ export default function WordEditor({wordId}:props){
         }),
         });
 
-        if(!res){
+        if(!res.ok){
             alert("保存できませんでした。")
             return;
         }
@@ -83,32 +88,34 @@ export default function WordEditor({wordId}:props){
 
     return(
     <div className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md space-y-6">
-      {/* 이미지 업로드 */}
-      <div>
+      {/* 사진 업로드 / 촬영 */}
+        <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
-          画像アップロード
+            写真をアップロード / 撮影
         </label>
         <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="block w-full text-sm text-gray-600
-                     file:mr-4 file:py-2 file:px-4
-                     file:rounded-lg file:border-0
-                     file:text-sm file:font-semibold
-                     file:bg-blue-50 file:text-blue-700
-                     hover:file:bg-blue-100"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-600
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
         />
-        <div className="mt-3">
-          {/* 업로드 미리보기 */}
-          <img
-            src={form.preview ?? undefined}
-            alt="preview"
-            width={400}
-            className="rounded-lg border object-cover w-48 h-32"
-          />
+
+        {/* 미리보기 */}
+        {form.preview && (
+            <div className="mt-3">
+            <img
+                src={form.preview}
+                alt="preview"
+                className="rounded-lg border object-cover w-48 h-32"
+            />
+            </div>
+        )}
         </div>
-      </div>
 
       {/* 일본어 입력 */}
       <div>
