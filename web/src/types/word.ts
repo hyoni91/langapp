@@ -24,7 +24,7 @@ export type Word = {
 // 포스팅용
 export type WordForm = {
   jaSurface: string;
-  koSurface: string;
+  koSurface: string;  
   imageFile: File | null;
   preview: string | null;
 };
