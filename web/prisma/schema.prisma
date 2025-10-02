@@ -14,6 +14,7 @@ model User {
   locale           String            @default("ja")
   createdAt        DateTime          @default(now())
   firebaseUid      String            @unique
+
   images           Image[]
   timeLimitSetting TimeLimitSetting?
   events           StudyEvent[]
@@ -30,14 +31,21 @@ model Image {
   contentType String?
   createdAt   DateTime @default(now())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  word Word?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word        Word?
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  words     Word[]   @relation("WordTags")
 }
 
 model Word {
   id        String     @id @default(cuid())
-  tags      String[]   @default([])
   createdAt DateTime   @default(now())
   jaSurface String
   koSurface String
@@ -46,6 +54,7 @@ model Word {
   userId    String
 
   studyEvent StudyEvent[]
+  tags       Tag[]        @relation("WordTags")
   image      Image?       @relation(fields: [imageId], references: [id])
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -60,6 +69,7 @@ model StudySession {
   startedAt   DateTime
   endedAt     DateTime?
   durationSec Int?
+
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, startedAt])
@@ -74,17 +84,18 @@ model StudyEvent {
   selectedWordId String?
   responseMs     Int?
   createdAt      DateTime    @default(now())
+
   user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   word           Word        @relation(fields: [wordId], references: [id], onDelete: Cascade)
 }
 
 model TimeLimitSetting {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  minutesPerSession Int      @default(20) // 「20分」デフォルト
+  updatedAt        DateTime @updatedAt
 
-  minutesPerSession Int      @default(20) //「20分」デフォルト
-  updatedAt         DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
