@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { WordForm } from "@/types/word";
-import { useState } from "react"
+import { Tags, WordForm } from "@/types/word";
+import { useEffect, useState } from "react"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebaseClient";
 import { useUser } from "@/context/UserContext";
@@ -16,13 +16,58 @@ export default function WordEditor({wordId}:props){
 
   //React의 Hook(useState, useEffect 등)은 컴포넌트 최상위에서만 호출 가능
     const {uid} = useUser();
+    const [allTags, setAllTags] = useState<Tags[]>([]);
 
     const [form, setForm] = useState<WordForm>({
         jaSurface: "",
         koSurface: "",
         imageFile: null,
         preview:null,
+        tags : [] as string[]
     })
+
+    //태그 목록
+    const fetchTags = async () => {
+        try {
+          const res = await fetch("/api/tags");
+          if (!res.ok) throw new Error("タグ取得失敗");
+          const data = await res.json();
+          setAllTags(data);
+        } catch (e) {
+          console.error("タグ取得エラー:", e);
+        }
+      };
+
+    useEffect(()=>{
+      fetchTags();
+    },[])
+
+    // 태그 선택 토글
+    const toggleTag = (tagName: string) => {
+      setForm((prev) => {
+        const already = prev.tags.includes(tagName);
+        return {
+          ...prev,
+          tags: already
+            ? prev.tags.filter((t) => t !== tagName)
+            : [...prev.tags, tagName],
+        };
+      });
+    };
+
+    //태그 추가
+    const addNewTag = (e : React.KeyboardEvent<HTMLInputElement>)=>{
+      if (e.key === "Enter" ){
+        e.preventDefault();
+        const value = e.currentTarget.value.trim();
+        if( value && !form.tags.includes(value)){
+          setForm((prev)=>({...prev, tags:[...prev.tags, value] }))
+        }
+      }
+      e.currentTarget.value = "";
+
+    }
+
 
     const handleChange = (key: "jaSurface" | "koSurface", value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -72,6 +117,7 @@ export default function WordEditor({wordId}:props){
             imageUrl,
             storagePath,
             contentType : form.imageFile.type,
+            tags: form.tags,
         }),
         });
 
@@ -83,6 +129,17 @@ export default function WordEditor({wordId}:props){
         const data = await res.json();
         console.log("保存成功:", data);
         alert("保存しました！");
+
+        setForm({
+        jaSurface: "",
+        koSurface: "",
+        imageFile: null,
+        preview:null,
+        tags : [] as string[] 
+        })
+
+        //새 태그 목록 갱신
+        await fetchTags();
     }
 
 
@@ -144,6 +201,40 @@ export default function WordEditor({wordId}:props){
           className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           placeholder="한국어를 입력"
         />
+      </div>
+      <div>
+        {/*태그 */}
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          タグ選択
+        </label>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {allTags.map((tag) => (
+            <button
+              key={tag.id}
+              type="button"
+              onClick={() => toggleTag(tag.name)}
+              className={`px-3 py-1 rounded-lg border ${
+                form.tags.includes(tag.name)
+                  ? "bg-gray-100"
+                  : "bg-black text-white"
+              }`}
+            >
+              {tag.name}
+            </button>
+          ))}
+        </div>
+      </div>
+        {/* 새 태그 추가 */}
+      <input
+        type="text"
+        placeholder="新しいタグを入力して Enter"
+        onKeyDown={addNewTag}
+        className="w-full border rounded px-3 py-1"
+      />
+
+      {/* 선택된 태그 표시 */}
+      <div className="mt-2 text-sm text-gray-600">
+        選択中: {form.tags.length > 0 ? form.tags.join(", ") : "なし"}
       </div>
 
       {/* 저장 버튼 */}
