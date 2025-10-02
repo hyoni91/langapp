@@ -1,11 +1,13 @@
+import { UserProvider } from "@/context/UserContext";
 import {getDecodedSessionOrRedirect } from "@/lib/authServer";
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-   await getDecodedSessionOrRedirect();
+   const decoded = await getDecodedSessionOrRedirect();
 
-    return <>
+    return (
+    <UserProvider value={{ uid: decoded.uid, email: decoded.email, name: decoded.name }}>
     {children}
-    </>;
+    </UserProvider>
     
-
+    )
 }

@@ -13,3 +13,11 @@ export interface User{
     email: string;
     name: string;
 }
+
+
+//UserContext
+export type UserContextType = {
+  uid: string;
+  email?: string;
+  name?: string;
+};
