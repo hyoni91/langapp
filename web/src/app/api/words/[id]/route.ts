@@ -1,11 +1,12 @@
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { prisma } from "@/lib/prisma";
+import { create } from "domain";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 
 export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
-    const { jaSurface, koSurface, status, imageUrl, storagePath, contentType } = await req.json();
+    const { jaSurface, koSurface, status, imageUrl, storagePath, contentType, tags} = await req.json();
 
     //user
     const cookieStore = await cookies();
@@ -54,11 +55,16 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
             userId: user.id,
             jaSurface: jaSurface ?? "",
             koSurface: koSurface ?? "",
-            imageId : image.id,
-            status : finalStatus,            
+            imageId: image.id,
+            status: finalStatus,
+            tags: {
+                connectOrCreate: (tags ?? []).map((t: string) => ({
+                    where: { name: t },
+                    create: { name: t },
+                })),
+            },
         },
-        include: { image: true },
-
+        include: { image: true, tags: true },
         });
     } else {
         // 기존 단어 수정
@@ -70,8 +76,15 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
                 koSurface : koSurface ?? "",
                 status : finalStatus,
                 ...(image?.id ? { imageId : image.id } : {}),
+                tags : {
+                    set : [], // 기존 관계 다 끊기(수정시, 사용자가 처음부터 다시 선택)
+                    connectOrCreate: (tags ?? []).map((t:string)=>({
+                        where : { name : t},
+                        create : {name : t}
+                    }))
+                }
             },
-            include: { image: true },
+            include: { image: true , tags : true},
         });
         } catch {
         return NextResponse.json({ error: "word not found" }, { status: 404 });

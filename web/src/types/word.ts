@@ -27,4 +27,10 @@ export type WordForm = {
   koSurface: string;  
   imageFile: File | null;
   preview: string | null;
+  tags: string[];
 };
+
+export type Tags = {
+  id : string,
+  name : string
+}
