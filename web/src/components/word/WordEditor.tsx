@@ -13,6 +13,7 @@ type props ={
 
 export default function WordEditor({wordId}:props){
 
+
   //React의 Hook(useState, useEffect 등)은 컴포넌트 최상위에서만 호출 가능
     const {uid} = useUser();
 
