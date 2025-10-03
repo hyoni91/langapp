@@ -6,6 +6,7 @@ export interface LearningCardData {
   ja: string;            // = word.jaSurface
   imgUrl: string;        // = word.image?.imageUrl ?? placeholder
   tags: string[];
+  imgId : string;
   status: "draft" | "published";
 }
 

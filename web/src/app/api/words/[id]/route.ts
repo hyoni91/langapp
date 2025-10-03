@@ -1,6 +1,7 @@
+/** WordEditor 단어 작성 API (사진, 단어, 태그) */
+
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { prisma } from "@/lib/prisma";
-import { create } from "domain";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
