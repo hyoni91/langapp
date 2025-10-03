@@ -1,3 +1,5 @@
+/** 모든 태그 목록 불러오 */
+
 import { prisma } from "@/lib/prisma";
 import {  NextResponse } from "next/server";
 
