@@ -1,4 +1,3 @@
-import { mockListData } from "@/lib/mock/lessons";
 import LearningCard from "@/components/learning/LearningCard";
 import StudyTimerBadge from "@/components/timer/StudyTimerBadge";
 import StudyStartButton from "@/components/timer/StudyStartButton";
@@ -11,11 +10,10 @@ export default function LessonsPage() {
         
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {mockListData.map((card) => (
-          <LearningCard key={card.id} card={card} />
-        ))}
+          <LearningCard  />
       </div>
       <StudyTimerBadge />
+      
     </main>
   );
 }

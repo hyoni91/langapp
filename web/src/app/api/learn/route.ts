@@ -29,6 +29,7 @@ export async function GET() {
         //유저의 단어장 리스트 전부 
         const wordList = await prisma.word.findMany({
         where : {userId : user.id},
+        distinct: ["id"], // 혹시라도 중복을 방지
         orderBy : {createdAt : "asc"},
         include : { image:true, tags:true}
         })
@@ -43,7 +44,8 @@ export async function GET() {
          ja: w.jaSurface,
          imgUrl: w.image?.imageUrl ?? "https://via.placeholder.com/300x200?text=No+Image",
          tags: w.tags.map((t) => t.name), // Tag 객체 배열 → string[]
-         status: w.status
+         status: w.status,
+         imgId : w.image?.id as string 
          })
         );
 
