@@ -45,7 +45,7 @@ export async function GET() {
          imgUrl: w.image?.imageUrl ?? "https://via.placeholder.com/300x200?text=No+Image",
          tags: w.tags.map((t) => t.name), // Tag 객체 배열 → string[]
          status: w.status,
-         imgId : w.image?.id as string 
+         imgId : w.image?.id as string // 이미지 확인용 
          })
         );
 
