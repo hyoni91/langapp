@@ -60,8 +60,8 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
             status: finalStatus,
             tags: {
                 connectOrCreate: (tags ?? []).map((t: string) => ({
-                    where: { name: t },
-                    create: { name: t },
+                    where: { userId_name: { userId: user.id, name: t } }, // 복합 unique 키 명시
+                    create: { userId: user.id, name: t },                
                 })),
             },
         },
@@ -80,8 +80,8 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
                 tags : {
                     set : [], // 기존 관계 다 끊기(수정시, 사용자가 처음부터 다시 선택)
                     connectOrCreate: (tags ?? []).map((t:string)=>({
-                        where : { name : t},
-                        create : {name : t}
+                        where: { userId_name: { userId: user.id, name: t } }, 
+                        create: { userId: user.id, name: t },                
                     }))
                 }
             },
