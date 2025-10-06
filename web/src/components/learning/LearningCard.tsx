@@ -10,28 +10,24 @@ export default function LearningCard() {
   const [card, setCard] = useState<LearningListData>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-    useEffect(() => {
-    fetch(`/api/words${selectedTag ? `?tag=${selectedTag}` : ""}`)
-      .then((res) => res.json())
-      .then(setCard);
-  }, [selectedTag]);
+   useEffect(() => {
+    const fetchWords = async () => {
+      try {
+        const url = selectedTag
+          ? `/api/learn?tag=${encodeURIComponent(selectedTag)}`
+          : "/api/learn";
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchWordList = async () => {
-    const res = await fetch("/api/learn",{ cache: "no-store" });
-    if (!res.ok) throw new Error("リスト取得失敗！");
-    const data = await res.json();
-    if (!ignore) setCard(data);
-    console.log(data)
-   };
-
-    fetchWordList();
-    return () => {
-     ignore = true;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error("単語の取得に失敗しました");
+        const data = await res.json();
+        setCard(data);
+      } catch (err) {
+        console.error(err);
+      }
     };
-  }, []);
+
+    fetchWords();
+  }, [selectedTag]); 
 
   return (
     <>      

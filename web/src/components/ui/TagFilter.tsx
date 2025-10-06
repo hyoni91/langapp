@@ -1,7 +1,4 @@
-/** Tag필터링UI */
-
 "use client";
-
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -9,30 +6,38 @@ type Props = {
   defaultTag?: string | null;
 };
 
-export function TagFilter({onSelect,defaultTag=null}:Props){
-    const [tags, setTags] = useState<string[]>([]);
-    const [selected, setSelected] = useState<string | null>(defaultTag);
+export function TagFilter({ onSelect, defaultTag = null }: Props) {
+  const [tags, setTags] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string | null>(defaultTag);
 
-    useEffect(()=>{
-        fetch("/api/tags")
-        .then((res)=> res.json())
-        .then((data)=> setTags(data.map((t: { name: string }) => t.name)));
-    },[])
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const res = await fetch("/api/tags");
+        if (!res.ok) throw new Error("failed to fetch");
+        const data = await res.json();
+        setTags(data.map((t: { name: string }) => t.name));
+      } catch (err) {
+        console.error(err);
+        setTags([]);
+      }
+    };
+    fetchTags();
+  }, []);
 
-
-    return(
-       <div className="flex flex-wrap gap-2">
-      {/* <button
+  return (
+    <div className="flex flex-wrap gap-2">
+      <button
         onClick={() => {
           setSelected(null);
           onSelect(null);
         }}
         className={`px-3 py-1 rounded-full border ${
-          selected === null ? "bg-blue-500 text-white" : "bg-white"
+          selected === null ? "bg-blue-500 text-white" : "bg-white text-black"
         }`}
       >
         全て
-      </button> */}
+      </button>
 
       {tags.map((tag) => (
         <button
@@ -42,12 +47,16 @@ export function TagFilter({onSelect,defaultTag=null}:Props){
             onSelect(tag);
           }}
           className={`px-3 py-1 rounded-full border ${
-            selected === tag ? "bg-blue-500 text-white" : "bg-black"
+            selected === tag ? "bg-blue-500 text-white" : "bg-white text-black"
           }`}
         >
           {tag}
         </button>
       ))}
+
+      {tags.length === 0 && (
+        <p className="text-gray-500 text-sm mt-2">タグが登録されていません</p>
+      )}
     </div>
   );
 }

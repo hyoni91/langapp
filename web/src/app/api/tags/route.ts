@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
         const tags = await prisma.tag.findMany({
             where :  {
-                userId: decoded.uid,
+                userId: decoded.id,
                 name: { contains: keyword ?? "" }, // 검색어 있으면 필터링
             },
             orderBy: { createdAt: "asc" },
