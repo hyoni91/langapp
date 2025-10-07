@@ -3,30 +3,35 @@
 
 import { LearningCardData, LearningListData } from "@/types/lesson";
 import { useEffect, useState } from "react";
+import { TagFilter } from "../ui/TagFilter";
 
 
 export default function LearningCard() {
-
   const [card, setCard] = useState<LearningListData>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  useEffect(() => {
-    let ignore = false;
+   useEffect(() => {
+    const fetchWords = async () => {
+      try {
+        const url = selectedTag
+          ? `/api/learn?tag=${encodeURIComponent(selectedTag)}`
+          : "/api/learn";
 
-    const fetchWordList = async () => {
-    const res = await fetch("/api/learn",{ cache: "no-store" });
-    if (!res.ok) throw new Error("リスト取得失敗！");
-    const data = await res.json();
-    if (!ignore) setCard(data);
-    console.log(data)
-   };
-
-    fetchWordList();
-    return () => {
-     ignore = true;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error("単語の取得に失敗しました");
+        const data = await res.json();
+        setCard(data);
+      } catch (err) {
+        console.error(err);
+      }
     };
-  }, []);
+
+    fetchWords();
+  }, [selectedTag]); 
 
   return (
+    <>      
+    <TagFilter onSelect={setSelectedTag} />
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {card.map((card:LearningCardData)=>(
       <article 
@@ -67,5 +72,6 @@ export default function LearningCard() {
       </article>
     ))}
     </div>
+    </>
   );
 }

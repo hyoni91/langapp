@@ -123,6 +123,7 @@ export default function WordEditor({wordId}:props){
 
         if(!res.ok){
             alert("保存できませんでした。")
+            console.log(res.json())
             return;
         }
 
