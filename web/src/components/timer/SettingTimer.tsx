@@ -83,47 +83,52 @@ export default function SettingTimer() {
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!loading) saveSetting();
-      }}
-      className="space-y-3"
-    >
-      <div className="flex items-center gap-2">
-        <label htmlFor="minutes" className="font-medium">
-          時間:
-        </label>
-        <input
-          id="minutes"
-          type="number"
-          inputMode="numeric"
-          min={5}
-          max={120}
-          step={1}
-          value={minutesInput}
-          onChange={(e) => {
-            setError(null);
-            setSuccess(null);
-            setMinutesInput(e.target.value);
-          }}
-          className="w-24 border rounded px-2 py-1"
-        />
-        <span>分 (5〜120分)</span>
-      </div>
+    onSubmit={(e) => {
+      e.preventDefault();
+      if (!loading) saveSetting();
+    }}
+    className="space-y-3 text-center"
+  >
+    <div className="flex justify-center items-center gap-3">
+      <label htmlFor="minutes" className="font-medium text-lg">
+        時間:
+      </label>
 
-      {!inRange && minutesInput !== "" && (
-        <p className="text-red-500 text-sm">5〜120の整数で入力してください。</p>
-      )}
-      {error && <p className="text-red-600">{error}</p>}
-      {success && <p className="text-green-600">{success}</p>}
+      <input
+        id="minutes"
+        type="number"
+        inputMode="numeric"
+        min={5}
+        max={120}
+        step={1}
+        value={minutesInput}
+        onChange={(e) => {
+          setError(null);
+          setSuccess(null);
+          setMinutesInput(e.target.value);
+        }}
+        className="w-20 border border-gray-300 rounded-xl px-3 py-2 text-center text-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+      />
+
+      <span className="font-medium text-lg">分</span>
 
       <button
         type="submit"
         disabled={!canSave}
-        className="mt-2 px-4 py-2 rounded text-white disabled:opacity-50 disabled:cursor-not-allowed bg-blue-600"
+        className="px-6 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "保存中..." : "保存"}
       </button>
-    </form>
+    </div>
+
+    {/* 메시지 영역 고정 */}
+    <div className="h-5 mt-1">
+      {inRange === false && minutesInput !== "" && (
+        <p className="text-red-500 text-sm">5〜120の整数で入力してください。</p>
+      )}
+      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {success && <p className="text-green-600 text-sm">{success}</p>}
+    </div>
+  </form>
   );
 }
