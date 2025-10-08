@@ -2,7 +2,7 @@
 "use client"
 
 import { Tags, WordForm } from "@/types/word";
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebaseClient";
 import { useUser } from "@/context/UserContext";
@@ -43,17 +43,17 @@ export default function WordEditor({wordId}:props){
     },[])
 
     // 태그 선택 토글
-    const toggleTag = (tagName: string) => {
+    const toggleTag = useCallback((tagName: string) => { //useCallback을 사용해서 불필요한 재랜더링방지
       setForm((prev) => {
         const already = prev.tags.includes(tagName);
         return {
           ...prev,
-          tags: already
-            ? prev.tags.filter((t) => t !== tagName)
-            : [...prev.tags, tagName],
+          tags: already //현재 선택한 태그가 이미 있는 대그야? 
+            ? prev.tags.filter((t) => t !== tagName) // 태그이름 같아? 그럼 빼!
+            : [...prev.tags, tagName], // 아니면 남겨
         };
       });
-    };
+    }, []);
 
     //태그 추가
     const addNewTag = (e : React.KeyboardEvent<HTMLInputElement>)=>{
@@ -65,7 +65,6 @@ export default function WordEditor({wordId}:props){
         }
       }
       e.currentTarget.value = "";
-
     }
 
 
@@ -121,11 +120,13 @@ export default function WordEditor({wordId}:props){
         }),
         });
 
-        if(!res.ok){
-            alert("保存できませんでした。")
-            console.log(res.json())
-            return;
+        if (!res.ok) {
+          const err = await res.json();
+          console.error("保存失敗:", err);
+          alert("保存できませんでした。");
+          return;
         }
+
 
         const data = await res.json();
         console.log("保存成功:", data);
@@ -232,11 +233,26 @@ export default function WordEditor({wordId}:props){
         onKeyDown={addNewTag}
         className="w-full border rounded px-3 py-1"
       />
-
+      <div>タグ：
       {/* 선택된 태그 표시 */}
-      <div className="mt-2 text-sm text-gray-600">
-        選択中: {form.tags.length > 0 ? form.tags.join(", ") : "なし"}
+      {form.tags.length === 0 ? (
+        <span className="px-3 py-2 rounded-lg">
+          なし
+        </span>
+      ) : (
+        form.tags.map((tag, idx) => (
+          <button 
+            key={tag + idx}
+            type="button"
+            onClick={()=>toggleTag(tag) }
+            className="px-3 py-1 rounded-lg border mr-2"
+          >
+            {tag}
+          </button>
+        ))
+      )}
       </div>
+      
 
       {/* 저장 버튼 */}
       <div className="text-center">

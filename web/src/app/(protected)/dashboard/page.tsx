@@ -18,7 +18,6 @@ export default async function DashboardPage() {
 
   const kpi = await getDashboardData(decoded.uid, "ja");
 
-
   // 최초 로그인 직후 sync 전에 올 수 있음 → 안전 처리
   if (!user) {
     return (
@@ -40,20 +39,20 @@ export default async function DashboardPage() {
 
 
   return (
-     <main className="min-h-screen max-w-md mx-auto px-4 py-10 flex flex-col space-y-8">
+    <main className="min-h-screen max-w-md mx-auto px-4 py-10 flex flex-col justify-center space-y-8">
       <section aria-labelledby="profile" className="text-center">
         <h1 id="profile" className="text-kid-2xl ">
           ようこそ, {user.name ?? "ユーザー"} さん 👋
         </h1>
-        <p className="text-kid-lg text-gray-600">{user.email}</p>
+        {/* <p className="text-kid-lg text-gray-600">{user.email}</p> */}
         <p className="text-xs text-gray-400">登録日: {createdAtText}</p>
       </section>
 
       <section aria-labelledby="today" className="text-center space-y-2">
         <h2 id="today" className="text-kid-xl font-semibold">今日の学習</h2>
         <ul className="text-kid-lg space-y-1">
-          <li>今日の単語学習: {kpi.today.wordCount}語</li>
-          <li>今日の学習時間: {kpi.today.label}</li>
+          <li>単語学習: {kpi.today.wordCount}語</li>
+          <li>学習時間: {kpi.today.label}</li>
         </ul>
       </section>
 
