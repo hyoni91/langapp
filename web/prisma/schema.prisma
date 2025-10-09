@@ -111,12 +111,13 @@ enum WordStatus {
 }
 
 enum StudyAction {
-  open
-  tts
-  quiz_start
-  quiz_answer_ok
-  quiz_answer_ng
-  quiz_end
+  open //학습 카드 오픈
+  tts // 한일 음성 클릭 
+  learn // 단어 학습 완료 
+  quiz_start //테스트 모드 진입
+  quiz_answer_ok  //결과:정답
+  quiz_answer_ng //결과:오답
+  quiz_end //테스트 모드 종료 
 }
 
 enum Lang {

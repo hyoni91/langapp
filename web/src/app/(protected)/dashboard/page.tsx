@@ -14,8 +14,8 @@ export default async function DashboardPage() {
 
   // ユーザ情報
   const user = await prisma.user.findUnique({
-    where: { firebaseUid: decoded.uid },
-    select: { name: true, email: true, createdAt: true },
+    where: { firebaseUid : decoded.uid },
+    select: { name: true, email: true, createdAt: true, id : true },
   });
 
   if (!user) {
@@ -35,7 +35,8 @@ export default async function DashboardPage() {
   }
 
   // 🔹 KPI 取得
-  const kpi = await getDashboardData(decoded.uid, "ja");
+  const kpi = await getDashboardData(user.id, "ja");
+  console.log(kpi);
   const createdAtText = user.createdAt?.toLocaleDateString("ja-JP") ?? "-";
 
   return (
@@ -80,10 +81,10 @@ export default async function DashboardPage() {
 
           <div className="flex justify-center gap-6">
             <KidButton asChild className="text-lg px-6 py-3">
-              <Link href="/study/words">単語練習を始める</Link>
+              <Link href="/study/words">今日の単語を見る</Link>
             </KidButton>
             <KidButton asChild className="bg-gray-800 hover:bg-gray-900 text-lg px-6 py-3">
-              <Link href="/study/sentences">文練習を始める</Link>
+              <Link href="/study/sentences">単語テストをする</Link>
             </KidButton>
           </div>
         </section>

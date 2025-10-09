@@ -76,52 +76,107 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
-      <h1>Register</h1>
+    <main className="min-h-screen bg-gray-50 flex justify-center items-start md:items-center px-4 py-10">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow p-10 space-y-8">
+        <h1 className="text-center text-3xl font-bold text-blue-700">
+          アカウント登録
+        </h1>
+        <p className="text-center text-gray-500">
+          メール・パスワード・名前を入力してください
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
-            required
-            autoComplete="email"
-            disabled={submitting}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 이메일 */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block mb-2 text-lg font-medium text-gray-700"
+            >
+              メールアドレス
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={form.email}
+              onChange={(e) =>
+                setForm({ ...form, email: e.target.value.trim() })
+              }
+              required
+              autoComplete="email"
+              disabled={submitting}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-lg
+                         focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="you@example.com"
+            />
+          </div>
 
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
-            autoComplete="new-password"
-            disabled={submitting}
-            minLength={6}
-          />
-        </div>
+          {/* 비밀번호 */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block mb-2 text-lg font-medium text-gray-700"
+            >
+              パスワード
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+              autoComplete="new-password"
+              disabled={submitting}
+              minLength={6}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-lg
+                         focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="6文字以上で入力"
+            />
+          </div>
 
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-            disabled={submitting}
-          />
-        </div>
+          {/* 이름 */}
+          <div>
+            <label
+              htmlFor="name"
+              className="block mb-2 text-lg font-medium text-gray-700"
+            >
+              名前
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+              disabled={submitting}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-lg
+                         focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="例：ひょに"
+            />
+          </div>
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Registering..." : "Register"}
-        </button>
-      </form>
+          {/* 버튼 */}
+          <div className="text-center">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+            >
+              {submitting ? "登録中..." : "登録"}
+            </button>
+          </div>
+        </form>
 
-      {msg && <p style={{ marginTop: 12 }}>{msg}</p>}
-    </>
+        {/* 메시지 */}
+        {msg && (
+          <p
+            className={`text-center text-sm font-medium ${
+              msg.includes("完了") ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {msg}
+          </p>
+        )}
+      </div>
+    </main>
   );
 }
