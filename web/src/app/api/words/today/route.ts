@@ -1,0 +1,1 @@
+/** 오늘의 단어 10개 들고오기 : status:published / createdAt :최신? */
