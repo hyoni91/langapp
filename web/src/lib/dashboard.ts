@@ -54,12 +54,12 @@ export async function getDashboardData(userId: string, locale: "ja" | "ko" = "ja
       select: { startedAt: true, endedAt: true, durationSec: true },
     }),
     prisma.studyEvent.findMany({
-      where: { userId, createdAt: { gte: start, lte: end } }, // 오늘 이벤트(todayEvents)
+      where: { userId, createdAt: { gte: start, lte: end }, action: { in: ["learn", "quiz_end"] }, }, // 오늘 이벤트(todayEvents)
       distinct: ["wordId"],
       select: { wordId: true },
     }),
     prisma.studyEvent.findMany({
-      where: { userId },                                      // 누적 이벤트(allEvents)
+      where: { userId,  action: { in: ["learn", "quiz_end"] }, },                                      // 누적 이벤트(allEvents)
       distinct: ["wordId"],
       select: { wordId: true },
     }),
