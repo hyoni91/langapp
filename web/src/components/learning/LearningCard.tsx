@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { LearningCardData, LearningListData } from "@/types/lesson";
+import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson";
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
 
@@ -9,7 +9,9 @@ import { TagFilter } from "../ui/TagFilter";
 export default function LearningCard() {
   const [card, setCard] = useState<LearningListData>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
 
+  // 단어 목록을 태그에 따라 필터링하여 가져오기
    useEffect(() => {
     const fetchWords = async () => {
       try {
@@ -28,6 +30,19 @@ export default function LearningCard() {
 
     fetchWords();
   }, [selectedTag]); 
+
+  // 발음완료(학습완료) 처리 함수
+  const handleLearned = (wordId: string) => {
+    const newLearnedWord: LearnedWord = {
+      id: wordId,
+      learnedAt: new Date(),
+      action: "learned",
+      lang: "ja",
+    };
+    setLearnedWords((prev) => [...prev, newLearnedWord]);
+    // 필요시 서버에 학습 완료 상태를 전송하는 로직 추가 가능
+  }
+
 
   return (
     <>      
@@ -68,6 +83,16 @@ export default function LearningCard() {
           >
             {card.status}
           </span>
+        </div>
+        {/** 발음완료 버튼 */}
+        <div className="mt-4 flex gap-2">
+          <button 
+            type="button"
+            onClick={() => handleLearned(card.id)}
+            className="w-full rounded bg-blue-500 px-4 py-2 text-white"
+            >
+            はつおん
+          </button>
         </div>
       </article>
     ))}
