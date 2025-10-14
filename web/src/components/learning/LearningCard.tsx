@@ -33,15 +33,33 @@ export default function LearningCard() {
 
   // 발음완료(학습완료) 처리 함수
   const handleLearned = (wordId: string) => {
+    if (learnedWords.some(w => w.id === wordId)) return; // 먼저 중복 체크
+
     const newLearnedWord: LearnedWord = {
       id: wordId,
-      learnedAt: new Date(),
-      action: "learned",
+      action: "learn",
       lang: "ja",
     };
     setLearnedWords((prev) => [...prev, newLearnedWord]);
-    // 필요시 서버에 학습 완료 상태를 전송하는 로직 추가 가능
-  }
+
+    // 서버에 학습 이벤트 기록
+    fetch('/api/study-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wordId, action: "learn" }),
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('学習イベントの記録に失敗しました');
+      return res.json();
+    })
+    .then(data => {
+      console.log('学習イベントが記録されました:', data);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  };
+
 
 
   return (
