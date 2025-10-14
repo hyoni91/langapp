@@ -11,3 +11,10 @@ export interface LearningCardData {
 }
 
 export type LearningListData = LearningCardData[];
+
+//단어 학습 완료(발음완료) 표시용
+export interface LearnedWord {
+  id: string;           // = word.id
+  action: string;       // "learn"
+  lang: string;         // "ja"
+}
