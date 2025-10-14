@@ -46,7 +46,7 @@ export default function LearningCard() {
     fetch('/api/study-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ wordId, action: "learn" }),
+      body: JSON.stringify({ wordId, action: "learn", lang: "ja" }),
     })
     .then(res => {
       if (!res.ok) throw new Error('学習イベントの記録に失敗しました');

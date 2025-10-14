@@ -2,6 +2,7 @@
 
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 // 발음완료 버튼 클릭시 이벤트 기록
 export async function POST(request: Request) {
@@ -11,36 +12,49 @@ export async function POST(request: Request) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     } 
 
-    const { uid } = decoded;
+    const {uid} = decoded;
+
+    const user = await prisma.user.findUnique({
+    where : {
+        firebaseUid : uid
+    },
+    select : {
+        id : true
+    }
+    });
+
+    if(!user){
+        return NextResponse.json({error : "user not found"}, {status:404});
+    }
 
     //요청 바디에서 단어 ID와 액션 타입 추출
-    const { wordId, action } = await request.json();
+    const { wordId, action, lang } = await request.json();
 
     if (!wordId || !action) {
-        return new Response(JSON.stringify({ error: "Invalid request body" }), { status: 400 });
+        return new NextResponse(JSON.stringify({ error: "Missing wordId or action" }), { status: 400 });
     }
+
 
     try {
         //학습 이벤트 기록
         const studyEvent = await prisma.studyEvent.create({
-            
             data : {
-                userId : uid,
+                userId : user.id,
                 wordId : wordId,
-                action : action, // "learned"
-                lang : "ja", // 기준 언어 고정                
+                action : action, 
+                lang : lang, 
             }
         });
 
         //유효한 액션 타입인지 확인 (학습 완료만 허용)
         if (!["learn"].includes(action)) {
-          return new Response(JSON.stringify({ error: "Invalid action type" }), { status: 400 });
+          return new NextResponse(JSON.stringify({ error: "Invalid action type" }), { status: 400 });
         }
-        
-         return new Response(JSON.stringify(studyEvent), { status: 201 });
+
+         return new NextResponse(JSON.stringify(studyEvent), { status: 201 });
 
     } catch (error) {
         console.error("Error recording study event:", error);
-        return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+        return new NextResponse(JSON.stringify({ error: "Server error" }), { status: 500 });
     }
 }
