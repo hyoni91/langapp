@@ -14,6 +14,7 @@ export default function LessonsPage() {
     setShowModal(false);
   });
 
+
   return (
     <main className="min-h-screen p-6">
       <h1 className="text-2xl font-bold mb-4">今日のカード</h1>
@@ -37,7 +38,7 @@ export default function LessonsPage() {
             <StudyStartButton />
             <LearningCard />
           </div>
-          <StudyTimerBadge />
+          <StudyTimerBadge onEnd={() => setShowModal(true)} />
         </>
       )}
     </main>
