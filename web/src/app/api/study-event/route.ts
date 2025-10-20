@@ -34,6 +34,21 @@ export async function POST(request: Request) {
         return new NextResponse(JSON.stringify({ error: "Missing wordId or action" }), { status: 400 });
     }
 
+    // 중복된 이벤트 방지 (예: 동일한 단어에 대해 동일한 액션이 이미 기록된 경우)
+    const existingEvent = await prisma.studyEvent.findFirst({
+        where: {
+            userId: user.id,
+            wordId: wordId,
+            action: action,
+            lang : lang,
+        },
+    });
+
+    if (existingEvent) {
+        return new NextResponse(JSON.stringify({ message: "Event already recorded" }), { status: 200 });
+    }
+
+    // 이벤트 기록  
 
     try {
         //학습 이벤트 기록
