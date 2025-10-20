@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTimer } from "./TimerProvider";
-import { set } from "zod";
+
 
 function fmt(ms: number) {
   const s = Math.ceil(ms / 1000);
@@ -29,6 +29,7 @@ export default function StudyTimerBadge() {
 
   return (
     <>
+
       {showBadge && (
         <div
           className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 rounded-full bg-black text-white px-4 py-2 shadow"

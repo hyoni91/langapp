@@ -5,7 +5,6 @@ import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson"
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
 
-
 export default function LearningCard() {
   const [card, setCard] = useState<LearningListData>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -91,7 +90,7 @@ export default function LearningCard() {
 
 
   return (
-    <>      
+    <>
     <TagFilter onSelect={setSelectedTag} />
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {card.map((cardItem:LearningCardData)=>(
