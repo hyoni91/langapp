@@ -53,7 +53,6 @@ export default function LearningCard() {
 
   // 발음완료(학습완료) 처리 함수
   const handleLearned = (cardItem: LearningCardData) => {
-    if (learnedWords.some(w => w.id === cardItem.id)) return; // 먼저 중복 체크
 
     // TTS 재생용 배열 구성 
     const ttsItems = [
@@ -61,7 +60,9 @@ export default function LearningCard() {
       { word: cardItem.ko, lang: "ko" },
     ];
     speakTextsSequentially(ttsItems);
-      
+
+    if (learnedWords.some(w => w.id === cardItem.id)) return; // 먼저 중복 체크
+
     const newLearnedWord: LearnedWord = {
       id: cardItem.id,
       action: "learn",
