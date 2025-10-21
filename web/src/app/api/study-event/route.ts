@@ -4,7 +4,7 @@ import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// 발음완료 버튼 클릭시 이벤트 기록
+// 발음완료 버튼 클릭시 이벤트 기록(게임 통과하면 단어학습 완료로 바꿀 계획)
 export async function POST(request: Request) {
     //유저 정보
     const decoded = await getDecodedSessionOrRedirect();
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
         });
 
         //유효한 액션 타입인지 확인 (학습 완료만 허용)
-        if (!["learn"].includes(action)) {
+        if (!["learn", "quiz_end"].includes(action)) {
           return new NextResponse(JSON.stringify({ error: "Invalid action type" }), { status: 400 });
         }
 

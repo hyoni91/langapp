@@ -51,15 +51,19 @@ export default function LearningCard() {
     window.speechSynthesis.speak(utter);
   }
 
-  // 발음완료(학습완료) 처리 함수
-  const handleLearned = (cardItem: LearningCardData) => {
+  // TTS 재생 
+  const handleSpeak = (cardItem: LearningCardData) => {
 
     // TTS 재생용 배열 구성 
     const ttsItems = [
       { word: cardItem.ja, lang: "ja" },
       { word: cardItem.ko, lang: "ko" },
     ];
-    speakTextsSequentially(ttsItems);
+    speakTextsSequentially(ttsItems); 
+  };
+
+  // 학습완료 처리 함수 (아직 사용 안함)
+  const handleLearned = (cardItem: LearningCardData) => {
 
     if (learnedWords.some(w => w.id === cardItem.id)) return; // 먼저 중복 체크
 
@@ -134,7 +138,7 @@ export default function LearningCard() {
         <div className="mt-4 flex gap-2">
           <button 
             type="button"
-            onClick={() => handleLearned(cardItem)}
+            onClick={() => handleSpeak(cardItem)}
             className="w-full rounded bg-blue-500 px-4 py-2 text-white"
             >
             はつおん
