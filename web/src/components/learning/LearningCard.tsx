@@ -10,13 +10,14 @@ export default function LearningCard() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
 
+
   // 단어 카드 불러오기(태그 필터링 포함)
    useEffect(() => {
     const fetchWords = async () => {
       try {
         const url = selectedTag
-          ? `/api/learn?tag=${encodeURIComponent(selectedTag)}`
-          : "/api/learn";
+          ? `/api/learn/today?tag=${encodeURIComponent(selectedTag)}`
+          : "/api/learn/today";
 
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("単語の取得に失敗しました");

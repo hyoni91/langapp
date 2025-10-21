@@ -14,11 +14,11 @@ export async function GET(req: NextRequest) {
         }
 
         //검색 키워드
-        const keyword = req.nextUrl.searchParams.get("q");        
+        const keyword = req.nextUrl.searchParams.get("q"); 
 
         const tags = await prisma.tag.findMany({
             where :  {
-                userId: decoded.id,
+                userId: decoded.uid,
                 name: { contains: keyword ?? "" }, // 검색어 있으면 필터링
             },
             orderBy: { createdAt: "asc" },
