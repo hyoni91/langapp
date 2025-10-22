@@ -13,12 +13,18 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        //유저의 모든 태그 가져오기
+        const user = await prisma.user.findUnique({
+            where : { firebaseUid : decoded.uid },
+            select : { id : true }
+        });
+
         //검색 키워드
         const keyword = req.nextUrl.searchParams.get("q"); 
 
         const tags = await prisma.tag.findMany({
             where :  {
-                userId: decoded.uid,
+                userId: user?.id,
                 name: { contains: keyword ?? "" }, // 검색어 있으면 필터링
             },
             orderBy: { createdAt: "asc" },
