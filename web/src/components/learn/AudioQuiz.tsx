@@ -55,9 +55,7 @@ export default function AudioQuiz() {
     <div>
       {correctedWord && (
         <div>
-          <div>Question ID: {correctedWord.id}</div>
-          <div>Korean: {correctedWord.ko}</div>
-          <div>Japanese: {correctedWord.jp}</div>
+          <h2>{correctedWord.jp} / {correctedWord.ko}</h2>
           <button onClick={playAudio} className="px-4 py-2 bg-blue-500 text-white rounded-md">
             🔊 発音
           </button>
@@ -77,7 +75,7 @@ export default function AudioQuiz() {
                 : ""
             }`}
           >
-            <img src={option.imageUrl} alt="option" className="w-full h-24 object-cover" />
+            <img src={option.imageUrl} alt="option" className="w-full h-40 object-cover" />
           </div>
         ))}
       </div>
