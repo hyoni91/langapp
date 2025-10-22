@@ -18,3 +18,18 @@ export interface LearnedWord {
   action: string;       // "learn"
   lang: string;         // "ja"
 }
+
+
+// Quiz 문제용 타입
+export interface AudioQuizOption {
+  id: string;
+  imageUrl: string;
+}
+
+// Quiz 문제 전체 타입
+export interface AudioQuizQuestion {
+  id: string;
+  lang: string;
+  ko: string;
+  jp: string;
+}

@@ -233,7 +233,7 @@ export default function WordEditor({wordId}:props){
         onKeyDown={addNewTag}
         className="w-full border rounded px-3 py-1"
       />
-      <div>タグ：
+      <div>選択中：
       {/* 선택된 태그 표시 */}
       {form.tags.length === 0 ? (
         <span className="px-3 py-2 rounded-lg">

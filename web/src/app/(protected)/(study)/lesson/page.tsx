@@ -1,6 +1,6 @@
 "use client";
 
-import LearningCard from "@/components/learning/LearningCard";
+import LearningCard from "@/components/learn/LearningCard";
 import StudyTimerBadge from "@/components/timer/StudyTimerBadge";
 import StudyStartButton from "@/components/timer/StudyStartButton";
 import { useState } from "react";
