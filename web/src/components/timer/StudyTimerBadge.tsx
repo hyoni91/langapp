@@ -2,7 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTimer } from "./TimerProvider";
-import { set } from "zod";
+
+
+type Props = {
+  // 종료하면 모달 표시
+  onEnd: () => void;
+};
 
 function fmt(ms: number) {
   const s = Math.ceil(ms / 1000);
@@ -11,7 +16,7 @@ function fmt(ms: number) {
   return `${mm}:${ss}`;
 }
 
-export default function StudyTimerBadge() {
+export default function StudyTimerBadge({onEnd}: Props) {
   const { status, remainingMs, setDurationMin, reset} = useTimer();
   const [open, setOpen] = useState(false);
 
@@ -29,6 +34,7 @@ export default function StudyTimerBadge() {
 
   return (
     <>
+
       {showBadge && (
         <div
           className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 rounded-full bg-black text-white px-4 py-2 shadow"
@@ -60,7 +66,7 @@ export default function StudyTimerBadge() {
                 onClick={() => {
                   setOpen(false);
                   reset(); // 남은시간 초기화(idle)
-                  // 필요하면 여기서 /api/sessions/end 호출 가능
+                  onEnd();
                 }}
                 className="rounded-xl px-4 py-2 bg-black text-white"
               >

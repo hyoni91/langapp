@@ -5,19 +5,19 @@ import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson"
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
 
-
 export default function LearningCard() {
   const [card, setCard] = useState<LearningListData>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [learnedWords, setLearnedWords] = useState<LearnedWord[]>([]);
+
 
   // 단어 카드 불러오기(태그 필터링 포함)
    useEffect(() => {
     const fetchWords = async () => {
       try {
         const url = selectedTag
-          ? `/api/learn?tag=${encodeURIComponent(selectedTag)}`
-          : "/api/learn";
+          ? `/api/learn/today?tag=${encodeURIComponent(selectedTag)}`
+          : "/api/learn/today";
 
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("単語の取得に失敗しました");
@@ -51,15 +51,19 @@ export default function LearningCard() {
     window.speechSynthesis.speak(utter);
   }
 
-  // 발음완료(학습완료) 처리 함수
-  const handleLearned = (cardItem: LearningCardData) => {
+  // TTS 재생 
+  const handleSpeak = (cardItem: LearningCardData) => {
 
     // TTS 재생용 배열 구성 
     const ttsItems = [
       { word: cardItem.ja, lang: "ja" },
       { word: cardItem.ko, lang: "ko" },
     ];
-    speakTextsSequentially(ttsItems);
+    speakTextsSequentially(ttsItems); 
+  };
+
+  // 학습완료 처리 함수 (아직 사용 안함)
+  const handleLearned = (cardItem: LearningCardData) => {
 
     if (learnedWords.some(w => w.id === cardItem.id)) return; // 먼저 중복 체크
 
@@ -91,7 +95,7 @@ export default function LearningCard() {
 
 
   return (
-    <>      
+    <>
     <TagFilter onSelect={setSelectedTag} />
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {card.map((cardItem:LearningCardData)=>(
@@ -134,7 +138,7 @@ export default function LearningCard() {
         <div className="mt-4 flex gap-2">
           <button 
             type="button"
-            onClick={() => handleLearned(cardItem)}
+            onClick={() => handleSpeak(cardItem)}
             className="w-full rounded bg-blue-500 px-4 py-2 text-white"
             >
             はつおん

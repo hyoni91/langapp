@@ -3,6 +3,7 @@
 import { useTimer } from "./TimerProvider";
 import { useRouter } from "next/navigation";
 
+
 type Props = {
   /** 시작 후 이동할 경로 (선택). 예: "/lessons" */
   redirectTo?: string;
@@ -10,6 +11,7 @@ type Props = {
   labelStart?: string;   // 기본: 勉強開始
   labelPause?: string;   // 기본: 一時停止
   labelReset?: string;   // 기본: リセット
+  onStart?: () => void;  
 };
 
 export default function StudyStartButton({
@@ -18,6 +20,7 @@ export default function StudyStartButton({
   labelStart = "勉強開始",
   labelPause = "一時停止",
   labelReset = "リセット",
+  onStart,
 }: Props) {
   const { status, start, pause, reset, resume } = useTimer();
   const router = useRouter();
@@ -28,11 +31,12 @@ export default function StudyStartButton({
       <button
         className={className}
         onClick={() => {
-            if (status === "idle"){
-                 start();
-            } else if (status === "paused") resume();
+          if (status === "idle") {
+            start();
+          } else if (status === "paused") resume();
 
-              if (redirectTo) router.push(redirectTo);
+          if (redirectTo) router.push(redirectTo);
+          if (onStart) onStart();
         }}
       >
         {labelStart}
