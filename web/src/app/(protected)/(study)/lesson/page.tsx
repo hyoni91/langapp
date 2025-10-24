@@ -24,7 +24,7 @@ export default function LessonsPage() {
       console.log("Started session:", data.sessionId);
 
       // タイマー設定してからスタート
-      const remainingMs = new Date(data.willEndAt).getTime() - Date.now();
+      const remainingMs = new Date(data.willEndAt).getTime() - Date.now() * 60 * 1000; 
       setDurationMin(remainingMs); 
       start();
 
