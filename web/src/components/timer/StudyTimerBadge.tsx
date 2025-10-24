@@ -5,7 +5,7 @@ import { useTimer } from "./TimerProvider";
 
 
 type Props = {
-  // 종료하면 모달 표시
+  // 종료하면 모달 표시(부모 컴포넌트에서 처리) //현재미사용 null 처리
   onEnd: () => void;
 };
 

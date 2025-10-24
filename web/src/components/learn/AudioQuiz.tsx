@@ -9,8 +9,7 @@ export default function AudioQuiz() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const fetchQuiz = async () => {
+  const fetchQuiz = async () => {
       try {
         const res = await fetch("/api/learn/quiz", { cache: "no-store" });
         if (!res.ok) throw new Error("퀴즈 문제를 불러오는데 실패했습니다.");
@@ -21,6 +20,8 @@ export default function AudioQuiz() {
         console.error(err);
       }
     };
+
+  useEffect(() => {
     fetchQuiz();
   }, []);
 
@@ -45,10 +46,32 @@ export default function AudioQuiz() {
   };
 
   // 정답 선택 함수
-  const selectOption = (id: string) => {
+  const selectOption = async (id: string) => {
     setSelectedId(id);
     if (!correctedWord) return;
-    setIsCorrect(id === correctedWord.id);
+    const correct = id === correctedWord.id;
+    setIsCorrect(correct);
+
+    if(correct){
+      await fetch("/api/study-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          wordId: correctedWord.id,
+          action: "learn",
+        }),
+      });
+
+      setTimeout(() => {
+        // 다음 문제로 이동
+        fetchQuiz();
+        setSelectedId(null);
+        setIsCorrect(null);
+      }, 1000);
+    }
+    
   };
 
   return (
@@ -85,6 +108,7 @@ export default function AudioQuiz() {
           {isCorrect ? "✅ 正解!" : "❌ 残念!"}
         </div>
       )}
+
     </div>
   );
 }

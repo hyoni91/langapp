@@ -1,3 +1,4 @@
+import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { adminAuth } from "@/lib/firebaseAdmin";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
@@ -8,18 +9,18 @@ import { NextRequest, NextResponse } from "next/server";
 // 1. 유저 인증 2. 유저 정보 가져오기 3. 진행 중 세션이 있으면 이어서, 없으면 새로 시작
 // 4. 세션 제한 시간 가져오기 (없으면 기본 20분) 5. 응답으로 세션 정보 반환
 export async function POST(req : NextRequest){
-   const cookieStore = await cookies();
-   const session = cookieStore.get("session")?.value;
-   if(!session) {
-       return NextResponse.json({ error: "no session" }, { status: 401 });
-   }
 
    try{
-    const decoded = await adminAuth.verifySessionCookie(session, true);
+    const decoded = await getDecodedSessionOrRedirect();
+    if(!decoded){
+        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     const { uid } = decoded;
 
     const user = await prisma.user.findUnique({
-        where: { firebaseUid : uid }
+        where: { firebaseUid : uid },
+        select: { id: true }
     });
     if (!user) return NextResponse.json({ error: "no user" }, { status: 401 });
 

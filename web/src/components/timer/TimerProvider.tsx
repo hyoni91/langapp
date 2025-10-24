@@ -39,8 +39,8 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     useEffect(() => {
         if (status !== "running") {
             if (rafIdRef.current != null) {
-                cancelAnimationFrame(rafIdRef.current);
-                rafIdRef.current = null;
+                cancelAnimationFrame(rafIdRef.current); // 진행중이 아니면 루프 중단
+                rafIdRef.current = null; // ID 초기화
             }
             return;
         }
@@ -49,7 +49,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
             if (startAtRef.current == null) return;
 
             const now = performance.now();
-            const elapsed = (now - startAtRef.current) + pausedAccumRef.current;
+            const elapsed = (now - startAtRef.current) + pausedAccumRef.current; // 경과 시간
             const newRemaining = Math.max(durationMs - elapsed, 0); // 남은 시간 계산
 
             setRemainingMs(newRemaining);
@@ -93,7 +93,6 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
 
     const start = () => {
         if (status === "running") return;   
-
         setStatus("running");
         startAtRef.current = performance.now();
         pausedAccumRef.current = 0;

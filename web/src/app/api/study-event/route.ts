@@ -4,7 +4,7 @@ import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// 발음완료 버튼 클릭시 이벤트 기록(게임 통과하면 단어학습 완료로 바꿀 계획)
+// 게임 통과하면 단어학습 완료
 export async function POST(request: Request) {
     //유저 정보
     const decoded = await getDecodedSessionOrRedirect();
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     }
 
     //요청 바디에서 단어 ID와 액션 타입 추출
-    const { wordId, action, lang } = await request.json();
+    const { wordId, action } = await request.json();
 
     if (!wordId || !action) {
         return new NextResponse(JSON.stringify({ error: "Missing wordId or action" }), { status: 400 });
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
             userId: user.id,
             wordId: wordId,
             action: action,
-            lang : lang,
         },
     });
 
@@ -48,7 +47,6 @@ export async function POST(request: Request) {
         return new NextResponse(JSON.stringify({ message: "Event already recorded" }), { status: 200 });
     }
 
-    // 이벤트 기록  
 
     try {
         //학습 이벤트 기록
@@ -57,7 +55,7 @@ export async function POST(request: Request) {
                 userId : user.id,
                 wordId : wordId,
                 action : action, 
-                lang : lang, 
+                lang : "ja" //일본어 고정
             }
         });
 
