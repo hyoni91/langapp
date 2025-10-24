@@ -10,6 +10,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     const [durationMs, setDurationMs] = useState(20 * 60_000); // 초기값 20분(밀리초)
     const [remainingMs, setRemainingMs] = useState(durationMs); // 남은 시간(밀리초)
     const [status, setStatus] = useState<Status>("idle"); //idle = 초기, running = 진행중, paused = 일시정지
+    
 
     const startAtRef = useRef<number | null>(null); // 타이머 시작 시점
     const pausedAccumRef = useRef<number>(0); // 일시정지 누적 시간을 ms 단위로 저장
