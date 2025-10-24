@@ -38,7 +38,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const nextEndedAt = new Date(base + addMs); // 연장된 종료시간 계산
 
     const update = await prisma.studySession.update({
-        where: { id: params.id },
+        where: { id: params.id }, //sessionId  
         data: { endedAt: nextEndedAt },
         select: { endedAt: true },
     });
