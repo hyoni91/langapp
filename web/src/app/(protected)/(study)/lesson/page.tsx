@@ -4,11 +4,11 @@
 
 import LearningCard from "@/components/learn/LearningCard";
 import { useTimer } from "@/components/timer/TimerProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 
 
 export default function LessonsPage() {
-  const { start,pause, setDurationMin } = useTimer();
+  const { start,pause, setDurationMin, } = useTimer();
   const [sessionId, setSessionId] = useState<string | null>(null);
 
 

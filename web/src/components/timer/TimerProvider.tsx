@@ -12,6 +12,8 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     const [status, setStatus] = useState<Status>("idle"); //idle = 초기, running = 진행중, paused = 일시정지
     const [endAtMs , setEndAtMs] = useState<number | null>(null); 
     const [now, setNow] = useState(Date.now());
+    const [sessionId, setSessionId] = useState<string | null>(null);
+
 
     
     const startAtRef = useRef<number | null>(null); // 타이머 시작 시점
@@ -84,7 +86,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
                 rafIdRef.current = null;
             }
         };
-    }, [status, durationMs]);
+    }, [status, durationMs, endAtMs]);
 
 
 
@@ -133,11 +135,13 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
 
     const resume = () => {
         if (status !== "paused") return;
-        startAtRef.current = performance.now(); // 재개 시점만 새로 기록
-        setStatus("running");
-        // 남은 시간을 기준으로 endAt 재설정
+        // 남은 시간을 절대시각으로 복원 후, 경과계수 초기화
         const next = Date.now() + remainingMs;
         setEndAtMs(next);
+        pausedAccumRef.current = 0;         // ★ 추가(혼합 경로 방지)
+        startAtRef.current = performance.now(); // 재개 시점만 새로 기록
+        setStatus("running");
+
     };
 
     const reset = () => {
@@ -145,6 +149,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
         setRemainingMs(durationMs);
         startAtRef.current = null;
         pausedAccumRef.current = 0;
+        setEndAtMs(null);
         if (rafIdRef.current != null) {
             cancelAnimationFrame(rafIdRef.current);
             rafIdRef.current = null;
@@ -177,7 +182,8 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     status, durationMs, remainingMs,endAtMs,
     setDurationMin, start, pause, resume, reset,
     extendBy,
-    setEndAtMs: setEndAtMsSafe
+    setEndAtMs: setEndAtMsSafe,
+    sessionId, setSessionId,
   }), [status, durationMs, remainingMs, endAtMs]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

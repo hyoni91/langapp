@@ -6,11 +6,13 @@ export type Status = "idle"  // 待機中（未開始／リセット直後）
 // タイマー用コンテキストの型
 export type TimerCtx = {
   status: Status;            // 現在の状態
+  sessionId : string | null; //
 
   durationMs: number;        // 今回のセッションの長さ（ミリ秒）
   remainingMs: number;       // 残り時間（ミリ秒）
   endAtMs: number | null;    // 終了予定時刻（UNIX ms）。未設定なら null
 
+  setSessionId: (id: string | null) => void;  //
   setDurationMin: (m: number) => void; // デフォルトのセッション分数を更新（※自動開始しない）
   start: () => void;                    // ユーザー操作で開始する
   pause: () => void;                    // 一時停止
