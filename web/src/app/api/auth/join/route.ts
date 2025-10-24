@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const decoded = await adminAuth.verifyIdToken(token).catch(() => null);
     if (!decoded) return NextResponse.json({ error: "Invalid ID token" }, { status: 401 });
 
-    // UID 스푸핑 방지
+    // UID 스푸핑 방지 
     if (decoded.uid !== firebaseUid) {
       return NextResponse.json({ error: "UID mismatch" }, { status: 403 });
     }

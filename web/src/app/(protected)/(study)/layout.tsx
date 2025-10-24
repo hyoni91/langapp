@@ -1,4 +1,5 @@
-// app/(protected)/(study)/layout.tsx
+//** Protected study Layout */
+
 "use client";
 
 import StudyTimerBadge from "@/components/timer/StudyTimerBadge";

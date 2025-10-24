@@ -5,25 +5,22 @@ import { RegisterForm } from "@/types/auth";
 import { useState } from "react";
 import { auth } from "@/lib/firebaseClient"; 
 import type { FirebaseError } from "firebase/app";
-// (선택) next/navigation으로 회원가입 후 이동하고 싶다면
-// import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [form, setForm] = useState<RegisterForm>({ email: "", password: "", name: "" });
   const [msg, setMsg] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false); // 제출 중 상태
-  // const router = useRouter();
+  const [submitting, setSubmitting] = useState(false); //提出状態
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
 
     if (!form.email || !form.password || !form.name) {
-      setMsg("모든 항목을 입력해주세요.");
+      setMsg("すべてのフィールドを入力してください。");
       return;
     }
     if (form.password.length < 6) {
-      setMsg("비밀번호는 최소 6자 이상이어야 합니다.");
+      setMsg("パスワードは6文字以上である必要があります。");
       return;
     }
 
@@ -34,7 +31,7 @@ export default function RegisterPage() {
       const {uid, token} = await signUpWithEmail(form.email, form.password);
 
       const current = auth.currentUser;
-      if (!current) throw new Error("회원 가입 직후 사용자 세션이 설정되지 않았습니다.");
+      if (!current) throw new Error("ユーザー登録に失敗しました。");
 
       const response = await fetch("/api/join", {
         method: "POST",
@@ -52,22 +49,22 @@ export default function RegisterPage() {
       console.log(data);
 
       if (!response.ok) {
-        setMsg(data?.error ? `Join 실패: ${data.error}` : "Join 실패: 알 수 없는 오류");
+        setMsg(data?.error ? `Join 失敗: ${data.error}` : "Join 失敗: アル未知のエラー");
         return;
       }
 
-      setMsg("회원가입이 완료되었습니다. 🎉");
-      // 필요시 페이지 이동
+      setMsg("会員登録が完了しました。 🎉");
+      // 必要に応じてページ移動
       // router.push("/dashboard");
 
     } catch (err: unknown) {
-      // Firebase 단계/토큰 단계/서버 단계 등에서 발생 가능
+      // Firebase エラーメッセージ処理
       const m =
-        (err as FirebaseError)?.code // Firebase Auth 에러 코드
-          ? `회원가입 실패 (${(err as FirebaseError).code})`
+        (err as FirebaseError)?.code // Firebase Auth エラーコード
+          ? `会員登録失敗 (${(err as FirebaseError).code})`
           : (err as Error)?.message
-          ? `회원가입 실패: ${(err as Error).message}`
-          : "회원가입 중 오류가 발생했습니다.";
+          ? `会員登録失敗: ${(err as Error).message}`
+          : "会員登録中にエラーが発生しました。";
       setMsg(m);
       console.error("Registration error:", err);
     } finally {
@@ -86,7 +83,7 @@ export default function RegisterPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 이메일 */}
+          {/* メールアドレス */}
           <div>
             <label
               htmlFor="email"
@@ -110,7 +107,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 비밀번호 */}
+          {/* パスワード */}
           <div>
             <label
               htmlFor="password"
@@ -133,7 +130,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 이름 */}
+          {/* 名前 */}
           <div>
             <label
               htmlFor="name"
@@ -154,7 +151,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 버튼 */}
+          {/* ボタン */}
           <div className="text-center">
             <button
               type="submit"
@@ -166,7 +163,7 @@ export default function RegisterPage() {
           </div>
         </form>
 
-        {/* 메시지 */}
+        {/* メッセージ */}
         {msg && (
           <p
             className={`text-center text-sm font-medium ${

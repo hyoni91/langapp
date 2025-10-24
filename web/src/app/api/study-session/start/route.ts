@@ -1,13 +1,10 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
-import { adminAuth } from "@/lib/firebaseAdmin";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 
-// 자동 시작 API
-// 1. 유저 인증 2. 유저 정보 가져오기 3. 진행 중 세션이 있으면 이어서, 없으면 새로 시작
-// 4. 세션 제한 시간 가져오기 (없으면 기본 20분) 5. 응답으로 세션 정보 반환
+//** Session start */
+// ユーザー認証、ユーザー情報取得、進行中のセッション確認、セッション開始処理
 export async function POST(req : NextRequest){
 
    try{
@@ -24,7 +21,7 @@ export async function POST(req : NextRequest){
     });
     if (!user) return NextResponse.json({ error: "no user" }, { status: 401 });
 
-    // 진행 중 세션이 있으면 이어서
+    // 進行中セッションの確認
   const active = await prisma.studySession.findFirst({
     where: { userId: user.id, endedAt: null },
     select: { id: true, startedAt: true },

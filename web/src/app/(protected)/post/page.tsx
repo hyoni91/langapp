@@ -1,5 +1,6 @@
-import WordEditor from "@/components/word/WordEditor";
+//** 単語投稿ページ */
 
+import WordEditor from "@/components/word/WordEditor";
 
 export default function PostPage (){
 
