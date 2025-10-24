@@ -1,33 +1,33 @@
-// src/app/(protected)/settings/SettingTimer.tsx
+// ** 設定タイマー */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
 export default function SettingTimer() {
   const [loading, setLoading] = useState(false);
-  const [minutesInput, setMinutesInput] = useState<string>(""); // 입력은 문자열로 관리
+  const [minutesInput, setMinutesInput] = useState<string>(""); //入力は文字列で管理
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
-  // 공통: 숫자 변환 및 검증
+  // 共通: 数字変換および検証
   const parsed = minutesInput.trim() === "" ? NaN : Number(minutesInput);
   const isInt = Number.isInteger(parsed);
   const inRange = isInt && parsed >= 5 && parsed <= 120;
   const canSave = !loading && inRange;
 
-  // 마운트 시 설정 불러오기
+  // マウント時に設定を読み込む
   useEffect(() => {
-    mountedRef.current = true; // 마운트 상태 추적
+    mountedRef.current = true; // マウント状態を追跡
     const ac = new AbortController();
 
     (async () => {
       try {
-        // signal : ac.signal => 언마운트 시 fetch 취소
+        // signal : ac.signal => アンマウント時にfetchをキャンセル
         const res = await fetch("/api/settings/time-limit", { signal: ac.signal });
         if (!res.ok) throw new Error("failed to fetch");
         const j = await res.json();
-        // 설정이 없으면 20분 기본
+        // 設定が無ければ20分を基本
         const m = Number(j?.minutesPerSession ?? 20);
         if (!mountedRef.current) return;
         setMinutesInput(String(m));
@@ -40,14 +40,14 @@ export default function SettingTimer() {
     })();
 
     return () => {
-        // 언마운트 시 상태 초기화
+        // アンマウント時に状態を初期化
       mountedRef.current = false;
-      // fetch 취소
+      // fetchをキャンセル
       ac.abort();
     };
   }, []);
 
-  // 저장
+  // 保存
   async function saveSetting() {
     if (!inRange) {
       setError("5〜120の範囲で入力してください");
@@ -69,7 +69,7 @@ export default function SettingTimer() {
       }
       if (!mountedRef.current) return;
       setSuccess("保存しました");
-      // 2초 후 성공 메시지 자동 숨김
+      // 2秒後成功メッセージ自動非表示
       setTimeout(() => {
         if (mountedRef.current) setSuccess(null);
       }, 2000);
@@ -121,7 +121,7 @@ export default function SettingTimer() {
       </button>
     </div>
 
-    {/* 메시지 영역 고정 */}
+    {/* メッセージ領域固定 */}
     <div className="h-5 mt-1">
       {inRange === false && minutesInput !== "" && (
         <p className="text-red-500 text-sm">5〜120の整数で入力してください。</p>

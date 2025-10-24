@@ -1,46 +1,80 @@
+//** 今日の単語（Vocabulary of the Day）*/
+
 "use client";
 
 import LearningCard from "@/components/learn/LearningCard";
-import StudyTimerBadge from "@/components/timer/StudyTimerBadge";
-import StudyStartButton from "@/components/timer/StudyStartButton";
-import { useState } from "react";
+import { useTimer } from "@/components/timer/TimerProvider";
+import { useEffect, useState} from "react";
+
 
 export default function LessonsPage() {
-  const [hasStarted, setHasStarted] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const { start,pause, setDurationMin, } = useTimer();
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
-  const handleStart = (() =>  { 
-    setHasStarted(true);
-    setShowModal(false);
-  });
+
+
+  const startSession = async () => {
+    try {
+      const res = await fetch("/api/study-session/start", {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to start session");
+      const data = await res.json();
+      setSessionId(data.sessionId);
+      console.log("Started session:", data.sessionId);
+
+      // タイマー設定してからスタート
+      const remainingMs = new Date(data.willEndAt).getTime() - Date.now() * 60 * 1000; 
+      setDurationMin(remainingMs); 
+      start();
+
+      // セッション終了のタイマーセット
+      setTimeout(() => endSession(), remainingMs);
+
+          setTimeout(() => {
+      console.log("Timer fired, ending session");
+      endSession();
+    }, remainingMs);
+      
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
+  const endSession = async () => {
+    if (!sessionId) return;
+
+    try {
+      const res = await fetch("/api/study-session/end", {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to end session");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  
+
+  useEffect(() => {
+    startSession();
+
+    return () => {
+      pause();
+      endSession();
+    };
+
+  }, []);
 
 
   return (
     <main className="min-h-screen p-6">
       <h1 className="text-2xl font-bold mb-4">今日のカード</h1>
-
-      {/* 모달 */}
-      {
-        showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-lg">
-              <h2 className="text-xl font-bold mb-2">学習を始めますか？</h2>
-              <StudyStartButton onStart={handleStart} />
-            </div>
-          </div>
-        )
-      }
-
-      {/* 공부 시작 후에만 카드와 타이머 표시 */}
-      {hasStarted && (
-        <>
           <div className="mt-3">
-            <StudyStartButton />
             <LearningCard />
           </div>
-          <StudyTimerBadge onEnd={() => setShowModal(true)} />
-        </>
-      )}
     </main>
   );
 }

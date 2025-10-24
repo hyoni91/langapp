@@ -12,7 +12,7 @@ import { useState } from "react";
 export default function LoginPage() {
   const sp = useSearchParams(); 
   const router = useRouter();
-  const next = sp.get("next") || "/dashboard"; // 기본 이동 경로
+  const next = sp.get("next") || "/dashboard"; // デフォルト遷移先
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -64,7 +64,7 @@ export default function LoginPage() {
       router.replace(next);
     } catch (e: unknown) {
       console.error(e);
-      // Firebase Auth 에러 메시지 정리
+      // Firebase Auth エラーコードに基づくメッセージ
       const code = (e as { code?: string })?.code || "";
       const msg =
         code === "auth/invalid-credential"

@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useTimer } from "./TimerProvider";
 
 
+
 type Props = {
-  // 종료하면 모달 표시
+  // 종료하면 모달 표시(부모 컴포넌트에서 처리) //현재미사용 null 처리
   onEnd: () => void;
 };
 
@@ -19,6 +20,7 @@ function fmt(ms: number) {
 export default function StudyTimerBadge({onEnd}: Props) {
   const { status, remainingMs, setDurationMin, reset} = useTimer();
   const [open, setOpen] = useState(false);
+  
 
 
   // 종료 감지: running→idle로 넘어가며 0이 된 순간 모달 오픈
@@ -29,8 +31,12 @@ export default function StudyTimerBadge({onEnd}: Props) {
   }, [isOver]);
 
   // idle(초기)일 땐 배지 숨김, paused/running일 때만 배지 노출
-  const showBadge = status === "running" || status === "paused";
-  if (!showBadge && !open) return null;
+  // const showBadge = status === "running" || status === "paused";
+  // if (!showBadge && !open) return null;
+
+  // 일시정지 상태일 땐 항상 표시, 그 외엔 열려있을 때 또는 실행중일 때만 표시  
+  const showBadge = status !== "paused" ? (status === "running" || open) : true;
+
 
   return (
     <>
@@ -76,6 +82,7 @@ export default function StudyTimerBadge({onEnd}: Props) {
           </div>
         </div>
       )}
+      
     </>
   );
 }

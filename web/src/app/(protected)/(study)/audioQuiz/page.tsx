@@ -1,3 +1,5 @@
+//** 音声クイズ（Audio Quiz） */
+
 import AudioQuiz from "@/components/learn/AudioQuiz";
 
 
