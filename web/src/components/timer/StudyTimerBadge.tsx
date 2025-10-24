@@ -29,8 +29,12 @@ export default function StudyTimerBadge({onEnd}: Props) {
   }, [isOver]);
 
   // idle(초기)일 땐 배지 숨김, paused/running일 때만 배지 노출
-  const showBadge = status === "running" || status === "paused";
-  if (!showBadge && !open) return null;
+  // const showBadge = status === "running" || status === "paused";
+  // if (!showBadge && !open) return null;
+
+  // 일시정지 상태일 땐 항상 표시, 그 외엔 열려있을 때 또는 실행중일 때만 표시  
+  const showBadge = status !== "paused" ? (status === "running" || open) : true;
+
 
   return (
     <>
