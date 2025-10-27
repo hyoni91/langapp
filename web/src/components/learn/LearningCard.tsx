@@ -4,6 +4,8 @@
 import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson";
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
+import Image from "next/image";
+
 
 export default function LearningCard() {
   const [card, setCard] = useState<LearningListData>([]);
@@ -96,57 +98,97 @@ export default function LearningCard() {
 
   return (
     <>
-    <TagFilter onSelect={setSelectedTag} />
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {card.map((cardItem:LearningCardData)=>(
-      <article 
-      key={cardItem.id}
-      className="rounded-2xl border p-4 shadow-sm hover:shadow-md transition"
-      >
-        <div className="relative aspect-[4/3] mb-3 overflow-hidden rounded-xl bg-gray-100">
-          <img
-            src={cardItem.imgUrl}
-            alt={`${cardItem.ja} / ${cardItem.ko}`}
-            className="object-cover"
-          />
-        </div>
-        {/* 텍스트 (LearningCard 기본 구조 유지) */}
-        <h2 className="text-lg font-semibold">
-          {cardItem.ja} <span className="text-gray-500">/ {cardItem.ko}</span>
-        </h2>
+      {/* 태그 필터 */}
+      <div className="mb-6">
+        <TagFilter onSelect={setSelectedTag} />
+      </div>
 
-        <div className="mt-2 flex flex-wrap gap-2">
-          {cardItem.tags.map((t) => (
-            <span key={t} className="text-xs rounded-full border px-2 py-1">
-              {t}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-3">
-          <span
-            className={`text-xs px-2 py-1 rounded ${
-              cardItem.status === "published"
-                ? "bg-green-100 text-green-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
+      {/* 카드 리스트 */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl z-10 cursor-pointer">
+        {card.map((cardItem: LearningCardData) => (
+          <article
+            key={cardItem.id}
+            onClick={()=>{handleSpeak(cardItem)}}
+            className="
+              bg-white rounded-3xl shadow-lg border-4 border-dashed border-yellow-100
+              hover:scale-105 transition-transform
+              overflow-hidden
+            "
           >
-            {cardItem.status}
-          </span>
-        </div>
-        {/** 발음완료 버튼 */}
-        <div className="mt-4 flex gap-2">
-          <button 
-            type="button"
-            onClick={() => handleSpeak(cardItem)}
-            className="w-full rounded bg-blue-500 px-4 py-2 text-white"
-            >
-            はつおん
-          </button>
-        </div>
-      </article>
-    ))}
-    </div>
+            {/* 이미지 */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+              <img
+                src={cardItem.imgUrl}
+                alt={`${cardItem.ja} / ${cardItem.ko}`}
+                className="object-cover w-full h-full"
+              />
+            </div>
+
+            {/* 텍스트 */}
+            <div className="p-4 text-left">
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">
+                {cardItem.ja}
+              </h2>
+              <p className="text-lg text-gray-600 mb-3">{cardItem.ko}</p>
+
+              {/* 태그 */}
+              <div className="flex flex-wrap justify-start gap-2 mb-3">
+                {cardItem.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="text-xs bg-sky-200 text-sky-700 rounded-full px-3 py-1"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              {/* 버튼 */}
+              {/* <div className="flex justify-center gap-2 mt-2">
+                <button
+                  onClick={() => handleSpeak(cardItem)}
+                  className="rounded-full bg-blue-400 hover:bg-blue-500 px-4 py-2 text-white shadow"
+                >
+                  はつおん
+                </button>
+              </div> */}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* 🐙 문어 이미지 */}
+      <Image
+        src="/animals/octopus.png"
+        alt="문어"
+        width={150}
+        height={150}
+        className="absolute top-10 right-8 opacity-90"
+      />
+      {/* 🦀 게 */}
+      <Image
+        src="/animals/crab.png"
+        alt="게"
+        width={100}
+        height={100}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-90"
+      />
+      {/* 🌿 해초 */}
+      <Image
+        src="/animals/seaweed-left.png"
+        alt="해초"
+        width={120}
+        height={120}
+        className="absolute bottom-0 left-8"
+      />
+      <Image
+        src="/animals/seaweed-right.png"
+        alt="해초"
+        width={120}
+        height={120}
+        className="absolute bottom-0 right-8"
+      />
+
     </>
   );
 }

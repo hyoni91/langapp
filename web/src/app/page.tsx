@@ -30,7 +30,7 @@ export default function Home() {
         "
       >
         {/* 今日の単語 */}
-        <a href="/learn">
+        <a href="/lesson">
           <div
             className="
               bg-purple-500 text-white 
@@ -45,7 +45,7 @@ export default function Home() {
         </a>
 
         {/* クイズ */}
-        <a href="/quiz">
+        <a href="/audioQuiz">
           <div
             className="
               bg-yellow-300 text-white 
