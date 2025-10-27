@@ -4,7 +4,6 @@
 import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson";
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
-import Image from "next/image";
 
 
 export default function LearningCard() {
@@ -156,38 +155,6 @@ export default function LearningCard() {
           </article>
         ))}
       </div>
-
-      {/* 🐙 문어 이미지 */}
-      <Image
-        src="/animals/octopus.png"
-        alt="문어"
-        width={150}
-        height={150}
-        className="absolute top-10 right-8 opacity-90"
-      />
-      {/* 🦀 게 */}
-      <Image
-        src="/animals/crab.png"
-        alt="게"
-        width={100}
-        height={100}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-90"
-      />
-      {/* 🌿 해초 */}
-      <Image
-        src="/animals/seaweed-left.png"
-        alt="해초"
-        width={120}
-        height={120}
-        className="absolute bottom-0 left-8"
-      />
-      <Image
-        src="/animals/seaweed-right.png"
-        alt="해초"
-        width={120}
-        height={120}
-        className="absolute bottom-0 right-8"
-      />
 
     </>
   );

@@ -4,12 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTimer } from "./TimerProvider";
 
 
-
-type Props = {
-  // 종료하면 모달 표시(부모 컴포넌트에서 처리) //현재미사용 null 처리
-  onEnd: () => void;
-};
-
 function fmt(ms: number) {
   const s = Math.ceil(ms / 1000);
   const mm = String(Math.floor(s / 60)).padStart(2, "0");
@@ -17,7 +11,7 @@ function fmt(ms: number) {
   return `${mm}:${ss}`;
 }
 
-export default function StudyTimerBadge({onEnd}: Props) {
+export default function StudyTimerBadge() {
   const { status, remainingMs, setDurationMin, reset} = useTimer();
   const [open, setOpen] = useState(false);
   
@@ -72,7 +66,6 @@ export default function StudyTimerBadge({onEnd}: Props) {
                 onClick={() => {
                   setOpen(false);
                   reset(); // 남은시간 초기화(idle)
-                  onEnd();
                 }}
                 className="rounded-xl px-4 py-2 bg-black text-white"
               >
