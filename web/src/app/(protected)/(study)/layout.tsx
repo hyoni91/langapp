@@ -10,7 +10,6 @@ export default function StudyLayout({ children }: { children: React.ReactNode })
   
   return <TimerProvider>
       {children}
-      <StudyTimerBadge onEnd={() => null} />
+      <StudyTimerBadge />
     </TimerProvider>
 }
-

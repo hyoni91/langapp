@@ -11,10 +11,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     const [remainingMs, setRemainingMs] = useState(durationMs); // 남은 시간(밀리초)
     const [status, setStatus] = useState<Status>("idle"); //idle = 초기, running = 진행중, paused = 일시정지
     const [endAtMs , setEndAtMs] = useState<number | null>(null); 
-    const [now, setNow] = useState(Date.now());
     const [sessionId, setSessionId] = useState<string | null>(null);
-
-
     
     const startAtRef = useRef<number | null>(null); // 타이머 시작 시점
     const pausedAccumRef = useRef<number>(0); // 일시정지 누적 시간을 ms 단위로 저장
@@ -96,6 +93,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     // pause: 일시정지
     // resume: 다시 시작
     // reset: 처음부터 다시
+    // setEndAtMsSaf : 
     const setDurationMin = (m: number) => {
         const ms = Math.max(1, Math.floor(m)) * 60_000; // 최소 1분
         setDurationMs(ms); 

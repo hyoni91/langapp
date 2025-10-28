@@ -1,5 +1,4 @@
 "use client";
-
 import { AudioQuizOption, AudioQuizQuestion } from "@/types/lesson";
 import { useEffect, useState } from "react";
 
@@ -9,23 +8,24 @@ export default function AudioQuiz() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
+  // 문제 불러오기
   const fetchQuiz = async () => {
-      try {
-        const res = await fetch("/api/learn/quiz", { cache: "no-store" });
-        if (!res.ok) throw new Error("퀴즈 문제를 불러오는데 실패했습니다.");
-        const data = await res.json();
-        setCorrectedWord(data.question);
-        setOptionsWord(data.options);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    try {
+      const res = await fetch("/api/learn/quiz", { cache: "no-store" });
+      if (!res.ok) throw new Error("퀴즈 문제를 불러오는데 실패했습니다。");
+      const data = await res.json();
+      setCorrectedWord(data.question);
+      setOptionsWord(data.options);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     fetchQuiz();
   }, []);
 
-  // TTS 재생 함수 (한국어 → 일본어 순차)
+  // 음성 재생 (한→일 순차)
   const playAudio = () => {
     if (!correctedWord) return;
     window.speechSynthesis.cancel();
@@ -45,70 +45,85 @@ export default function AudioQuiz() {
     window.speechSynthesis.speak(koUtter);
   };
 
-  // 정답 선택 함수
+  // 선택
   const selectOption = async (id: string) => {
     setSelectedId(id);
     if (!correctedWord) return;
     const correct = id === correctedWord.id;
     setIsCorrect(correct);
 
-    if(correct){
+    if (correct) {
       await fetch("/api/study-event", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          wordId: correctedWord.id,
-          action: "learn",
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wordId: correctedWord.id, action: "learn" }),
       });
 
-      setTimeout(() => {
-        // 다음 문제로 이동
+      await new Promise((resolve)=> setTimeout(resolve,1000));
+
         fetchQuiz();
         setSelectedId(null);
         setIsCorrect(null);
-      }, 1000);
     }
-    
   };
 
   return (
-    <div>
+    <div className="relative w-full max-w-6xl">
       {correctedWord && (
-        <div>
-          <h2>{correctedWord.jp} / {correctedWord.ko}</h2>
-          <button onClick={playAudio} className="px-4 py-2 bg-blue-500 text-white rounded-md">
-            🔊 発音
+        <div className="mb-6">
+          <p className="text-white text-lg mb-4 text-left drop-shadow-md">
+            よく聞いて正しい絵を選んでみよう！<br />
+            <span className="text-yellow-800 font-bold">
+              問題：{correctedWord.jp} / {correctedWord.ko}
+            </span>
+          </p>
+          <button
+            onClick={playAudio}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow-md cursor-pointer"
+          >
+            🔈 発音
           </button>
         </div>
       )}
 
-      <div className="mt-4 grid grid-cols-3 gap-4">
+      {/* ✅ 이미지 영역 확장 */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {optionsWord.map((option) => (
           <div
             key={option.id}
             onClick={() => selectOption(option.id)}
-            className={`border p-2 rounded cursor-pointer ${
-              selectedId === option.id
-                ? isCorrect
-                  ? "border-green-500"
-                  : "border-red-500"
-                : ""
-            }`}
+            className={`
+              rounded-3xl border-4 border-dashed shadow-lg overflow-hidden cursor-pointer transition-transform hover:scale-105
+              ${
+                selectedId === option.id
+                  ? isCorrect
+                    ? "border-green-500 bg-green-100"
+                    : "border-red-500 bg-red-100"
+                  : "border-white bg-white/80"
+              }
+            `}
           >
-            <img src={option.imageUrl} alt="option" className="w-full h-40 object-cover" />
+            {/* 🔹 여기 변경됨: aspect-[4/3] */}
+            <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+              <img
+                src={option.imageUrl}
+                alt="option"
+                className="object-cover w-full h-full"
+              />
+            </div>
           </div>
         ))}
       </div>
 
       {selectedId && (
-        <div className="mt-2">
-          {isCorrect ? "✅ 正解!" : "❌ 残念!"}
+        <div className="mt-4 text-xl font-bold text-center">
+          {isCorrect ? (
+            <span className="text-green-800">✅ 正解！</span>
+          ) : (
+            <span className="text-red-700">❌ 残念！</span>
+          )}
         </div>
       )}
-
     </div>
   );
 }
