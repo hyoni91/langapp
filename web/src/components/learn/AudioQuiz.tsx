@@ -59,11 +59,11 @@ export default function AudioQuiz() {
         body: JSON.stringify({ wordId: correctedWord.id, action: "learn" }),
       });
 
-      setTimeout(() => {
+      await new Promise((resolve)=> setTimeout(resolve,1000));
+
         fetchQuiz();
         setSelectedId(null);
         setIsCorrect(null);
-      }, 1000);
     }
   };
 
