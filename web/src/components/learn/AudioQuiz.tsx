@@ -25,7 +25,7 @@ export default function AudioQuiz() {
     fetchQuiz();
   }, []);
 
-  // 음성 재생 (한→일 순차)
+  // 음성 재생 (일→한)
   const playAudio = () => {
     if (!correctedWord) return;
     window.speechSynthesis.cancel();
@@ -39,10 +39,10 @@ export default function AudioQuiz() {
     jpUtter.rate = 0.5;
 
     koUtter.onend = () => {
-      window.speechSynthesis.speak(jpUtter);
+      window.speechSynthesis.speak(koUtter);
     };
 
-    window.speechSynthesis.speak(koUtter);
+    window.speechSynthesis.speak(jpUtter);
   };
 
   // 선택

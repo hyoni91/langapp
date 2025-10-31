@@ -1,11 +1,75 @@
 //** 音声クイズ（Audio Quiz） */
 
+"use client";
+
 import AudioQuiz from "@/components/learn/AudioQuiz";
+import { useTimer } from "@/components/timer/TimerProvider";
+import { useEffect, useState} from "react";
 import Image from "next/image";
 
 
 
 export default function AudioQuizPage() {
+  const { start,pause, setDurationMin, } = useTimer();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  const startSession = async () => {
+    try {
+      const res = await fetch("/api/study-session/start", {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to start session");
+      const data = await res.json();
+      const { sessionId, willEndAt } = data;
+
+      setSessionId(sessionId);
+      console.log("Started session:", sessionId);
+
+      // タイマー設定してからスタート
+      const remainingMs = new Date(willEndAt).getTime() - Date.now() * 60 * 1000; 
+      setDurationMin(remainingMs); 
+      start();
+
+      // セッション終了のタイマーセット
+      setTimeout(() => endSession(), remainingMs);
+
+          setTimeout(() => {
+      console.log("Timer fired, ending session");
+      endSession();
+    }, remainingMs);
+      
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
+  const endSession = async () => {
+    if (!sessionId) return;
+
+    try {
+      const res = await fetch("/api/study-session/end", {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to end session");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  
+
+  useEffect(() => {
+    startSession();
+
+    return () => {
+      pause();
+      endSession();
+    };
+
+  }, []);
+
   return (
     <main className="relative min-h-screen bg-[#00bf63] flex flex-col items-center px-6 py-10 overflow-hidden">
     
