@@ -7,8 +7,6 @@ import { useTimer } from "@/components/timer/TimerProvider";
 import { useEffect, useState} from "react";
 import Image from "next/image";
 
-
-
 export default function AudioQuizPage() {
   const { start,pause, setDurationMin, } = useTimer();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -23,17 +21,16 @@ export default function AudioQuizPage() {
       const { sessionId, willEndAt } = data;
 
       setSessionId(sessionId);
-      console.log("Started session:", sessionId);
-
       // タイマー設定してからスタート
-      const remainingMs = new Date(willEndAt).getTime() - Date.now() * 60 * 1000; 
-      setDurationMin(remainingMs); 
+      const remainingMs = new Date(willEndAt).getTime() - Date.now(); 
+      setDurationMin(remainingMs/60_000); 
       start();
+
 
       // セッション終了のタイマーセット
       setTimeout(() => endSession(), remainingMs);
 
-          setTimeout(() => {
+        setTimeout(() => {
       console.log("Timer fired, ending session");
       endSession();
     }, remainingMs);

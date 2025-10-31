@@ -1,5 +1,6 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
+import { subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -23,7 +24,11 @@ export async function POST(req : NextRequest){
 
     // 進行中セッションの確認
   const active = await prisma.studySession.findFirst({
-    where: { userId: user.id, endedAt: null },
+    where: { 
+      userId: user.id, 
+      endedAt: null, 
+      startedAt: { gte: subDays(new Date(), 1) } // 하루 이내 세션만 active 취급 
+    }, 
     select: { id: true, startedAt: true },
   });
 
