@@ -39,10 +39,10 @@ export default function AudioQuiz() {
     jpUtter.rate = 0.5;
 
     koUtter.onend = () => {
-      window.speechSynthesis.speak(koUtter);
+      window.speechSynthesis.speak(jpUtter);
     };
 
-    window.speechSynthesis.speak(jpUtter);
+    window.speechSynthesis.speak(koUtter);
   };
 
   // 선택
@@ -74,7 +74,7 @@ export default function AudioQuiz() {
           <p className="text-white text-lg mb-4 text-left drop-shadow-md">
             よく聞いて正しい絵を選んでみよう！<br />
             <span className="text-yellow-800 font-bold">
-              問題：{correctedWord.jp} / {correctedWord.ko}
+              問題： {correctedWord.ko} / {correctedWord.jp}
             </span>
           </p>
           <button

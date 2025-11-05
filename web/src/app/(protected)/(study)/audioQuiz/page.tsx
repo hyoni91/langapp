@@ -18,25 +18,25 @@ export default function AudioQuizPage() {
       });
       if (!res.ok) throw new Error("Failed to start session");
       const data = await res.json();
-      const { sessionId, willEndAt } = data;
+      const { sessionId, durationSec } = data;
 
       setSessionId(sessionId);
       // タイマー設定してからスタート
-      const remainingMs = new Date(willEndAt).getTime() - Date.now(); 
-      setDurationMin(remainingMs/60_000); 
+      setDurationMin(durationSec / 60);
+      
+      await new Promise((r) => setTimeout(r, 50));
+
       start();
 
-
-      // セッション終了のタイマーセット
-      setTimeout(() => endSession(), remainingMs);
-
-        setTimeout(() => {
-      console.log("Timer fired, ending session");
-      endSession();
-    }, remainingMs);
-      
+      // 自動終了予約 (ミリ)
+      const durationMs = durationSec * 1000;
+      setTimeout(() => {
+        console.log("Session time ended automatically");
+        endSession();
+      }, durationMs);
     } catch (err) {
-      console.error(err);
+      console.error("Error starting session:", err);
+
     }
   };
 

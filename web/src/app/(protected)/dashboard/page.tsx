@@ -36,7 +36,6 @@ export default async function DashboardPage() {
 
   // KPI 取得
   const kpi = await getDashboardData(user.id, "ja");
-  console.log(kpi);
   const createdAtText = user.createdAt?.toLocaleDateString("ja-JP") ?? "-";
 
   return (
