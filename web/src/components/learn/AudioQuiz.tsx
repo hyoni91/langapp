@@ -25,7 +25,7 @@ export default function AudioQuiz() {
     fetchQuiz();
   }, []);
 
-  // 음성 재생 (한→일 순차)
+  // 음성 재생 (일→한)
   const playAudio = () => {
     if (!correctedWord) return;
     window.speechSynthesis.cancel();
@@ -74,7 +74,7 @@ export default function AudioQuiz() {
           <p className="text-white text-lg mb-4 text-left drop-shadow-md">
             よく聞いて正しい絵を選んでみよう！<br />
             <span className="text-yellow-800 font-bold">
-              問題：{correctedWord.jp} / {correctedWord.ko}
+              問題： {correctedWord.ko} / {correctedWord.jp}
             </span>
           </p>
           <button

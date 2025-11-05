@@ -11,6 +11,8 @@ function sumSeconds(rows : SessionRow[], now = Date.now()) {
         const endTs = s.endedAt ? s.endedAt.getTime() : now;
         // durationSec이 null 또는 undefined 경우만 현재 시간 - 시작 시간으로 계산
         const sec = s.durationSec ?? Math.max(0, Math.floor((endTs - s.startedAt.getTime()) / 1000));
+        // const sec = Math.max(0, Math.floor((endTs - s.startedAt.getTime()) / 1000));
+
         const sumSec = sum + sec;
         return sumSec;
     }, 0);

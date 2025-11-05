@@ -7,7 +7,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 const Ctx = createContext<TimerCtx | null>(null);
 
 export default function TimerProvider({ children }: { children: React.ReactNode }) {
-    const [durationMs, setDurationMs] = useState(20 * 60_000); // 초기값 20분(밀리초)
+    const [durationMs, setDurationMs] = useState(20  * 60_000); // 초기값 (밀리초)
     const [remainingMs, setRemainingMs] = useState(durationMs); // 남은 시간(밀리초)
     const [status, setStatus] = useState<Status>("idle"); //idle = 초기, running = 진행중, paused = 일시정지
     const [endAtMs , setEndAtMs] = useState<number | null>(null); 
@@ -18,29 +18,9 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
     const rafIdRef = useRef<number | null>(null); // requestAnimationFrame ID
 
 
-    // 설정 불러오기 (초기 1회)
-    useEffect(()=>{
-        let cancelled = false;
-        (async()=>{
-            try{
-                const res = await fetch("/api/settings/time-limit");
-                if(!res.ok) throw new Error("failed to fetch" );
-                const j = await res.json();
-                const minutes = Number(j.minutesPerSession ?? 20);
-                if(cancelled) return;
-                setDurationMs(minutes * 60_000); // minutes 분 -> 밀리초
-                setRemainingMs(minutes * 60_000); // 남은 시간도 같이 설정
-            }catch(e){
-                console.error(e);
-            }
-        })();
-        return () => { cancelled = true; };
-    },[])
-
-
     // 틱 루프 (requestAnimationFrame)
     useEffect(() => {
-        if (status !== "running") {
+        if (status !== "running" || durationMs <= 0) {
             if (rafIdRef.current != null) {
                 cancelAnimationFrame(rafIdRef.current); // 진행중이 아니면 루프 중단
                 rafIdRef.current = null; // ID 초기화
@@ -83,7 +63,7 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
                 rafIdRef.current = null;
             }
         };
-    }, [status, durationMs, endAtMs]);
+    }, [status, endAtMs]);
 
 
 
@@ -108,11 +88,6 @@ export default function TimerProvider({ children }: { children: React.ReactNode 
         setStatus("running");
         startAtRef.current = performance.now();
         pausedAccumRef.current = 0;
-
-        //서버 동기화를 위해 절대시각 endAtMs도 함께 기록
-        const end = Date.now() + durationMs;
-        setEndAtMs(end);
-        setRemainingMs(end - Date.now());
     };
 
 

@@ -1,6 +1,5 @@
-import { adminAuth } from "@/lib/firebaseAdmin";
+import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
 import z from "zod";
 
 export const runtime = "nodejs";
@@ -9,38 +8,42 @@ const Body = z.object({
   minutesPerSession: z.number().min(5).max(120),
 });
 
-async function getUser(){
-    const cookieStore = await cookies();
-    const session = cookieStore.get("session")?.value;
-    if(!session) throw new Error("no session");
-
-    const decoded = await adminAuth.verifySessionCookie(session, true);
-    const { uid } = decoded;
-    
-    const user = await prisma.user.findUnique({
-        where: { firebaseUid : uid },
-        select: { id: true, firebaseUid: true },
-    });
-    if (!user) throw new Error("no user");
-    return user;
-}
 
 export async function GET() {
-    const user = await getUser();
-    if(!user) return new Response("no user", { status: 401 });
+
+    try{
+        const decoded = await getDecodedSessionOrRedirect();
+        const user = await prisma.user.findUnique({
+            where : { firebaseUid : decoded.uid },
+            select : { id: true}
+        })
+        if(!user) return new Response("no user", { status: 401 });
 
     const setting = await prisma.timeLimitSetting.findUnique({
         where: { userId: user.id },
     });
+
     return new Response(JSON.stringify({ minutesPerSession: setting?.minutesPerSession ?? 20 }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
     });
+
+    }catch(error){
+        console.log("error : " + error)
+        return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });    }
+
+    
 }
 
 export async function PUT(req: Request) {
-    const user = await getUser();
-    if(!user) return new Response("no user", { status: 401 });
+
+    try{
+    const decoded = await getDecodedSessionOrRedirect();
+        const user = await prisma.user.findUnique({
+            where : { firebaseUid : decoded.uid },
+            select : { id: true}
+        })
+        if(!user) return new Response("no user", { status: 401 });
 
     const { minutesPerSession } = Body.parse(await req.json());
 
@@ -56,5 +59,8 @@ export async function PUT(req: Request) {
         status: 200,
         headers: { "Content-Type": "application/json" },
     });
-
+} catch(error){
+           console.log("error : " + error)
+        return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });    }  
 }
+
