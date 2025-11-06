@@ -3,73 +3,13 @@
 "use client";
 
 import LearningCard from "@/components/learn/LearningCard";
-import { useTimer } from "@/components/timer/TimerProvider";
-import { useEffect, useState} from "react";
+import { useStudySession } from "@/hooks/useStudySession";
 import Image from "next/image";
 
 
 
 export default function LessonsPage() {
-  const { start,pause, setDurationMin, } = useTimer();
-  const [sessionId, setSessionId] = useState<string | null>(null);
-
-
-  const startSession = async () => {
-    try {
-      const res = await fetch("/api/study-session/start", {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to start session");
-      const data = await res.json();
-      const { sessionId, willEndAt } = data;
-
-      setSessionId(sessionId);
-
-      // タイマー設定してからスタート
-      const remainingMs = new Date(willEndAt).getTime() - Date.now(); 
-      setDurationMin(remainingMs / 60_000); 
-      start();
-
-      // セッション終了のタイマーセット
-      setTimeout(() => endSession(), remainingMs);
-
-          setTimeout(() => {
-      console.log("Timer fired, ending session");
-      endSession();
-    }, remainingMs);
-      
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-
-
-  const endSession = async () => {
-    if (!sessionId) return;
-
-    try {
-      const res = await fetch("/api/study-session/end", {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to end session");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  
-
-  useEffect(() => {
-    startSession();
-
-    return () => {
-      pause();
-      endSession();
-    };
-
-  }, []);
-
+   useStudySession();
 
   return (
     <main className="relative min-h-screen bg-orange-200 flex flex-col items-center px-6 py-10 overflow-hidden"
