@@ -9,6 +9,8 @@ import { useStudySession } from "@/hooks/useStudySession";
 export default function AudioQuizPage() {
     useStudySession();
 
+
+
   return (
     <main className="relative min-h-screen bg-[#00bf63] flex flex-col items-center px-6 py-10 overflow-hidden">
     

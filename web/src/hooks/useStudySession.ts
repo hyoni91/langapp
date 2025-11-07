@@ -4,8 +4,30 @@ import { useEffect, useState } from "react";
 
 export function useStudySession (){
     const pathname = usePathname();
-    const { start, pause, setDurationMin, } = useTimer();
+    const { start, pause, setDurationMin, setEndAtMs } = useTimer();
     const [sessionId, setSessionId] = useState<string | null>(null);
+
+    const extendSession = async (minutes = 5 ) => {
+    
+        if (!sessionId) return alert("sessionIDがありません");
+        try{
+            const res = await fetch(`/api/study-session/${sessionId}/extend`,{
+                method : "POST",
+                headers : { "Content-type" : "application/json" },
+                body: JSON.stringify({ addMinutes: minutes }),
+            });
+
+            if(!res.ok) throw new Error("延長失敗");
+            const data = await res.json();
+
+            // 타이머 동기화 (Provider에 연결)
+            const nextEndMs = new Date(data.endedAt).getTime();
+            setEndAtMs(nextEndMs);
+        }catch(error){
+            console.error("extendSession error:", error);
+        }
+      
+    }
 
     const startSession = async () => {
       try {
@@ -77,5 +99,5 @@ export function useStudySession (){
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, [sessionId]);
 
-  return { sessionId, startSession, endSession }
+  return { sessionId, startSession, endSession, extendSession }
 }
