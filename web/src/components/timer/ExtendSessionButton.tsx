@@ -1,31 +1,40 @@
-import { useExtendSession } from "./useExtendSession";
+// import { useExtendSession } from "./useExtendSession";
+
+import { useStudySession } from "@/hooks/useStudySession";
+import { useState } from "react";
 
 
 type Props = {
-    sessionId : string; //必ず必要
     minutes? : number;
     className? : string;
     onDone? : ()=>void;
 }
 
 export default function ExtendSessionButton({
-    sessionId,
     minutes = 5, //5分指定
     className,
     onDone,
-}:Props){
+  }:Props){
+    const { extendSession } = useStudySession();
+    const [ loading, setLoading ] = useState(false);
 
-    const { extend, loading } = useExtendSession({ sessionId });
-
-    //sessionId どこで？
+  const handleExtend = async () => {
+    try{
+      setLoading(true);
+      await extendSession(minutes);
+      onDone?.();
+    }catch(error){
+      console.error("延長失敗:", error);
+      alert("延長に失敗しました");
+    }finally{
+      setLoading(false);
+    }
+  }
 
    return (
     <button
       disabled={loading}
-      onClick={async () => {
-        await extend(minutes);
-        onDone?.();
-      }}
+      onClick={handleExtend}
       className={className ?? "rounded-xl px-4 py-2 border"}
     >
       {loading ? "延長中..." : `${minutes}分延長`}

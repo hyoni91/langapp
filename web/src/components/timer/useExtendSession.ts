@@ -1,4 +1,4 @@
-//** 延長Hooks サーバー反映 */
+//** 延長Hooks サーバー反映   전역관리 이거 대신 따로 관리하는 useStudySession안에 연장함수 사용중 */
 "use client";
 import { useState } from "react";
 import { useTimer } from "./TimerProvider";
