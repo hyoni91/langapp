@@ -1,33 +1,15 @@
 import { useTimer } from "@/components/timer/TimerProvider";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 
 export function useStudySession (){
     const pathname = usePathname();
     const { start, pause, setDurationMin, setEndAtMs } = useTimer();
     const [sessionId, setSessionId] = useState<string | null>(null);
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
-    const extendSession = async (minutes = 5 ) => {
-    
-        if (!sessionId) return alert("sessionIDがありません");
-        try{
-            const res = await fetch(`/api/study-session/${sessionId}/extend`,{
-                method : "POST",
-                headers : { "Content-type" : "application/json" },
-                body: JSON.stringify({ addMinutes: minutes }),
-            });
-
-            if(!res.ok) throw new Error("延長失敗");
-            const data = await res.json();
-
-            // 타이머 동기화 (Provider에 연결)
-            const nextEndMs = new Date(data.endedAt).getTime();
-            setEndAtMs(nextEndMs);
-        }catch(error){
-            console.error("extendSession error:", error);
-        }
-      
-    }
 
     const startSession = async () => {
       try {
@@ -42,15 +24,12 @@ export function useStudySession (){
         // タイマー設定してからスタート
         setDurationMin(durationSec / 60);
         
-        await new Promise((r) => setTimeout(r, 50));
-
         start();
 
         // 自動終了予約 (ミリ)
         const durationMs = durationSec * 1000;
-        setTimeout(() => {
-          endSession(sessionId);
-        }, durationMs);
+        const id = setTimeout(() => endSession(sessionId), durationMs);
+        setTimeoutId(id);
 
       } catch (err) {
         console.error("Error starting session:", err);
@@ -74,18 +53,45 @@ export function useStudySession (){
       }
     };
 
+    const extendSession = async (minutes = 5 ) => {
+    
+        if (!sessionId) return toast.error("セッション情報が見つかりません。");;
+        try{
+            const res = await fetch(`/api/study-session/${sessionId}/extend`,{
+                method : "POST",
+                headers : { "Content-type" : "application/json" },
+                body: JSON.stringify({ addMinutes: minutes }),
+            });
+
+            if(!res.ok) throw new Error("延長失敗");
+            const data = await res.json();
+
+            // 타이머 동기화 (Provider에 연결)
+            const nextEndMs = new Date(data.endedAt).getTime();
+            setEndAtMs(nextEndMs);
+
+             if (timeoutId) clearTimeout(timeoutId); // 기존 타이머 제거
+
+            // 새 타이머 다시 설정
+            const addMs = minutes * 60_000;
+            const id = setTimeout(() => endSession(sessionId), addMs);
+            setTimeoutId(id);
+
+        }catch(error){
+            console.error("extendSession error:", error);
+        }
+    }
+
 
     useEffect(() => {
       startSession();
 
       return () => {
         pause();
-        if (sessionId) {
-          endSession(sessionId);
-        } else {
-        }
+        if (timeoutId) clearTimeout(timeoutId);
+        if (sessionId) endSession(sessionId);
       };
-    }, [pathname, sessionId]);
+    }, [pathname]);
 
   useEffect(() => {
     const handleUnload = () => {

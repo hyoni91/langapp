@@ -2,7 +2,6 @@
 
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
-import { id } from "zod/locales";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
 
