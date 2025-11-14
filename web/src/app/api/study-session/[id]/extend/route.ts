@@ -3,8 +3,9 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-
+export async function POST(req: Request,context: { params: { id: string }}) {
+    
+    const { id } = context.params;
 
     try{
     const decoded = await getDecodedSessionOrRedirect();
@@ -25,7 +26,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const addMs = Math.max(1, Number(addMinutes || 0)) * 60_000; 
 
     const existing = await prisma.studySession.findFirst({
-        where: { id: params.id, userId: user.id },
+        where: { id: id, userId: user.id },
         select: { id: true, endedAt: true },
     });
 
@@ -37,7 +38,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const nextEndedAt = new Date(base + addMs); // 연장된 종료시간 계산
 
     const update = await prisma.studySession.update({
-        where: { id: params.id }, //sessionId  
+        where: { id: id }, //sessionId  
         data: { endedAt: nextEndedAt },
         select: { endedAt: true },
     });

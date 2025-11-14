@@ -94,16 +94,22 @@ export function useStudySession (){
     }, [pathname]);
 
   useEffect(() => {
-    const handleUnload = () => {
-      if (sessionId)
-        navigator.sendBeacon(
-          "/api/study-session/end",
-          JSON.stringify({ sessionId })
-        );
-    };
-    window.addEventListener("beforeunload", handleUnload);
-    return () => window.removeEventListener("beforeunload", handleUnload);
-  }, [sessionId]);
+  const handleUnload = () => {
+    if (sessionId) {
+      
+      // BlobでJSONを正しく送信
+      const payload = new Blob(
+        [JSON.stringify({ sessionId })],
+        { type: "application/json" }
+      );
+      navigator.sendBeacon("/api/study-session/end", payload);
+    }
+  };
+
+  window.addEventListener("beforeunload", handleUnload);
+  return () => window.removeEventListener("beforeunload", handleUnload);
+}, [sessionId]);
+
 
   return { sessionId, startSession, endSession, extendSession }
 }
