@@ -55,7 +55,7 @@ export async function GET() {
         },
         options: options.map(word => ({
             id: word.id,
-            imageUrl: word.image?.imageUrl ?? "https://via.placeholder.com/300x200?text=No+Image",
+            imageUrl: word.image?.imageUrl ?? " ",
         })),
     };
 

@@ -11,7 +11,7 @@ export default function AudioQuiz() {
   // 문제 불러오기
   const fetchQuiz = async () => {
     try {
-      const res = await fetch("/api/learn/quiz", { cache: "no-store" });
+      const res = await fetch("/api/learn/quiz/get-question", { cache: "no-store" });
       if (!res.ok) throw new Error("퀴즈 문제를 불러오는데 실패했습니다。");
       const data = await res.json();
       setCorrectedWord(data.question);
