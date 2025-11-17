@@ -3,9 +3,9 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request,context: { params: { id: string }}) {
+export async function POST(req: Request, { params } : { params: { id: string } }) {
     
-    const { id } = context.params;
+    const { id } = params;
 
     try{
     const decoded = await getDecodedSessionOrRedirect();
