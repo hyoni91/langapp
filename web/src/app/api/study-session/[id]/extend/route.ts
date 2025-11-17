@@ -5,9 +5,10 @@ import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function POST(req: NextRequest, context: { params: { id: string } }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function POST(req: NextRequest,context: any) {
   try {
-     const { id } = context.params;
+    const { id } = context.params as { id: string };
 
     if (!id) {
         return NextResponse.json({ error: "Missing session ID" }, { status: 400 });    
