@@ -3,8 +3,11 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request,{ params } : {params:Promise<{id : string}>}) {
-    const { id } = await params;
+export async function POST(req: Request) {
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop();
+
+    if (!id) return new Response("Missing session ID", { status: 400 });
 
   try {
     const decoded = await getDecodedSessionOrRedirect();
