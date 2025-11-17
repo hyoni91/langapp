@@ -19,10 +19,10 @@ export function useExtendSession({ sessionId, onError }: Opts) {
       extendBy(minutes);
 
       // 2) 서버 반영
-      const res = await fetch(`/api/study-session/${sessionId}/extend`, {
+      const res = await fetch(`/api/study-session/extend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ addMinutes: minutes }),
+        body: JSON.stringify({sessionId, addMinutes: minutes }),
       });
       if (!res.ok) throw new Error(`Extend failed: ${res.status}`);
       const json = await res.json(); // { endedAt, remainingSec }

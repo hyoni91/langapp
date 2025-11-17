@@ -5,12 +5,11 @@ import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function POST(req: NextRequest,context: { params: Promise<{ id: string }> }) {
+export async function POST(req: NextRequest) {
   try {
-    const params = await context.params;
-    const id = params.id;
+    const {sessionId} = await req.json();
 
-    if (!id) {
+    if (!sessionId) {
         return NextResponse.json({ error: "Missing session ID" }, { status: 400 });    
     }
 
@@ -33,7 +32,7 @@ export async function POST(req: NextRequest,context: { params: Promise<{ id: str
     const addMs = Math.max(1, Number(addMinutes || 0)) * 60_000;
 
     const existing = await prisma.studySession.findFirst({
-      where: { id, userId: user.id },
+      where: { id : sessionId, userId: user.id },
       select: { id: true, endedAt: true },
     });
 
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest,context: { params: Promise<{ id: str
     const nextEndedAt = new Date(base + addMs);
 
     const update = await prisma.studySession.update({
-      where: { id },
+      where: { id : sessionId },
       data: { endedAt: nextEndedAt },
       select: { endedAt: true },
     });
