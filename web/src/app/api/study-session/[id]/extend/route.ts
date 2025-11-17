@@ -2,24 +2,20 @@
 
 import { prisma } from "@/lib/prisma";
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
+import { NextRequest, NextResponse } from "next/server";
 
-interface Context {
-  params: {
-    id: string; 
-  };
-}
 
-export async function POST(req: Request, context: Context) {
+export async function POST(req: NextRequest, context: { params: { id: string } }) {
   try {
      const { id } = context.params;
 
     if (!id) {
-      return new Response("Missing session ID", { status: 400 });
+      return new NextResponse("Missing session ID", { status: 400 });
     }
 
     const decoded = await getDecodedSessionOrRedirect();
     if (!decoded) {
-      return new Response("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
@@ -28,7 +24,7 @@ export async function POST(req: Request, context: Context) {
     });
 
     if (!user) {
-      return new Response("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // 요청 바디에서 연장 시간 추출 (기본 5분)
@@ -41,7 +37,7 @@ export async function POST(req: Request, context: Context) {
     });
 
     if (!existing) {
-      return new Response("Not Found", { status: 404 });
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     // 기존 종료 시간 기준으로 연장
@@ -61,7 +57,7 @@ export async function POST(req: Request, context: Context) {
       Math.ceil((endedAt.getTime() - Date.now()) / 1000)
     );
 
-    return new Response(
+    return new NextResponse(
       JSON.stringify({
         endedAt: endedAt.toISOString(),
         remainingSec,
@@ -70,6 +66,6 @@ export async function POST(req: Request, context: Context) {
     );
   } catch (error) {
     console.error("Extend session error:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
