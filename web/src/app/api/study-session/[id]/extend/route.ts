@@ -3,9 +3,13 @@
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 import { prisma } from "@/lib/prisma";
 
+// Next.js 빌드에서 타입 검사를 피하기 위한 선언(prams자동으로 찾지 않도록)
+export const dynamic = "force-dynamic";
+
+
 export async function POST(req: Request) {
     const url = new URL(req.url);
-    const id = url.pathname.split("/").pop();
+    const id = url.pathname.split("/").at(-2); // [/extend] 앞의 id 부분 추출
 
     if (!id) return new Response("Missing session ID", { status: 400 });
 
