@@ -3,14 +3,15 @@
 import { prisma } from "@/lib/prisma";
 import { getDecodedSessionOrRedirect } from "@/lib/authServer";
 
-// Next.js 빌드에서 타입 검사를 피하기 위한 선언
-export const dynamic = "force-dynamic";
+interface Context {
+  params: {
+    id: string; 
+  };
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function POST(req: Request, ..._args: any[]) {
+export async function POST(req: Request, context: Context) {
   try {
-    const url = new URL(req.url);
-    const id = url.pathname.split("/").at(-2); // ← "/extend" 앞의 id 부분 추출
+     const { id } = context.params;
 
     if (!id) {
       return new Response("Missing session ID", { status: 400 });
