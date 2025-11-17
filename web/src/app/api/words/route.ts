@@ -6,8 +6,11 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
-    const { jaSurface, koSurface, status, imageUrl, storagePath, contentType, tags} = await req.json();
+export async function POST(req:NextRequest) {
+    const { id, jaSurface, koSurface, status, imageUrl, storagePath, contentType, tags} = await req.json();
+
+    const isNew = !id || id === "new";
+    
 
     //user
     const cookieStore = await cookies();
@@ -49,7 +52,7 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
 
 
     let word;
-    if (params.id === "new") {
+    if (isNew) {
         // 새로 생성
         word = await prisma.word.create({
         data: {
@@ -71,7 +74,7 @@ export async function POST(req:NextRequest, {params}:{params : {id : string}}) {
         // 기존 단어 수정
         try {
         word = await prisma.word.update({
-            where: { id: params.id, userId: user.id },
+            where: { id: id, userId: user.id },
             data: { 
                 jaSurface : jaSurface ?? "", 
                 koSurface : koSurface ?? "",

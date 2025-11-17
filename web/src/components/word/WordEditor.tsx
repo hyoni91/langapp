@@ -107,7 +107,7 @@ export default function WordEditor({wordId}:props){
 
 
         // 2. API 호출
-        const res = await fetch(`/api/words/${wordId || "new"}`, {
+        const res = await fetch(`/api/words`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -117,6 +117,7 @@ export default function WordEditor({wordId}:props){
             storagePath,
             contentType : form.imageFile.type,
             tags: form.tags,
+            id : wordId
         }),
         });
 
