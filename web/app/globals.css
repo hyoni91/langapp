@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 선택: 기본 바탕 */
+body { @apply bg-white text-gray-900; }
