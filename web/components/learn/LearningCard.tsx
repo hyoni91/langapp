@@ -17,8 +17,8 @@ export default function LearningCard() {
     const fetchWords = async () => {
       try {
         const url = selectedTag
-          ? `/api/learn-api/today?tag=${encodeURIComponent(selectedTag)}`
-          : "/api/learn-api/today";
+          ? `/api/today?tag=${encodeURIComponent(selectedTag)}`
+          : "/api/today";
 
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("単語の取得に失敗しました");
