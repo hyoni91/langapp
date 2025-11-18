@@ -1,14 +1,12 @@
 "use client";
 
+import { signOutUser, signUpWithGoogle } from "@/lib/authClient";
 import { auth } from "@/lib/firebaseClient";
 import {
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
-  signInWithRedirect,
-  getRedirectResult,
 } from "firebase/auth";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 
 export default function LoginPage() {
   const sp = useSearchParams(); 
@@ -42,37 +40,29 @@ export default function LoginPage() {
   };
 
   const loginWithGoogle = async () => {
-    setLoading(true);
-    setErr(null);
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider); 
-    } catch (e: unknown) {
-      console.error(e);
-      setErr("Failed to login with Google. Please try again later.");
-      setLoading(false);
-    }finally{
-      console.log("GoogleLogin try")
-    }
-  };
+  setLoading(true);
+  setErr(null);
 
-  //googleログイン後
-  useEffect(() => {
-  if (auth.currentUser) {
-    issueSession().then(() => router.replace(next));
-    return;
+  try {
+    const googleUser = await signUpWithGoogle();
+
+    // 토큰이 여기서 바로 있지!
+    await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ idToken: googleUser.token }),
+    });
+
+    router.replace(next);
+
+  } catch (e) {
+    console.error(e);
+    setErr("Googleログインに失敗しました。");
+  } finally {
+    setLoading(false);
   }
-
-  // 2) redirect 결과는 있을 때만 처리 (dev에서는 대부분 null)
-  getRedirectResult(auth).then((result) => {
-    console.log("Redirect Result:", result);
-
-    if (result?.user) {
-      issueSession().then(() => router.replace(next));
-    }
-  });
-}, [router, next]);
-
+};
 
 
 
