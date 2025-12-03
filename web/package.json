@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev & node scripts/open-browser.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -36,6 +36,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
+    "open": "^11.0.0",
     "postcss": "^8.5.6",
     "prisma": "^6.14.0",
     "tailwindcss": "^3.4.17",
