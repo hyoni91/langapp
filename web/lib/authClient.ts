@@ -1,3 +1,5 @@
+"use client"
+
 import { auth } from "./firebaseClient";
 import {
     createUserWithEmailAndPassword,

@@ -1,12 +1,12 @@
 "use client";
 
-import { signOutUser, signUpWithGoogle } from "@/lib/authClient";
+import { signUpWithGoogle } from "@/lib/authClient";
 import { auth } from "@/lib/firebaseClient";
 import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useSearchParams, useRouter } from "next/navigation";
-import {  useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function LoginPage() {
   const sp = useSearchParams(); 
