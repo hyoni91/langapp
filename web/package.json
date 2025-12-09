@@ -1,10 +1,11 @@
 {
   "name": "web",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev & node scripts/open-browser.js",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "pr:fmt": "prisma format",
