@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
+
 import { signUpWithGoogle } from "@/lib/authClient";
 import { auth } from "@/lib/firebaseClient";
 import {
