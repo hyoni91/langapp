@@ -16,6 +16,7 @@ export default function CallbackClient() {
 
       if (!result) {
         console.warn("No redirect result found");
+        console.log("No redirect result found");
         router.replace("/login");
         return;
       }
