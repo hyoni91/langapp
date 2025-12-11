@@ -23,12 +23,11 @@ export async function POST(req: NextRequest) {
   cookieStore.set({
     name: "session",
     value: sessionCookie,
-    httpOnly: true,                              // JS로 접근 불가
-    secure: process.env.NODE_ENV === "production", // HTTPS에서만 전송
-    sameSite: "lax",                             // CSRF 리스크 완화(일반 웹앱은 보통 lax)
-    path: "/",                                   // 전체 경로에 쿠키 유효
+    httpOnly: true, // JS로 접근 불가
+    secure: true, 
+    sameSite: "none",                             
+    path: "/", // 전체 경로에 쿠키 유효
     maxAge: COOKIE_MAXAGE, 
-    // secure: false, // ← 로컬 테스트용으로 false
                       
   });
 
