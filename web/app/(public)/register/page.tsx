@@ -61,9 +61,9 @@ export default function RegisterPage() {
       // Firebase エラーメッセージ処理
       const m =
         (err as FirebaseError)?.code // Firebase Auth エラーコード
-          ? `会員登録失敗 (${(err as FirebaseError).code})`
+          ? `会員登録失敗`
           : (err as Error)?.message
-          ? `会員登録失敗: ${(err as Error).message}`
+          ? `会員登録失敗: `
           : "会員登録中にエラーが発生しました。";
       setMsg(m);
       console.error("Registration error:", err);

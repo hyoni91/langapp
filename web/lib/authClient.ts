@@ -1,15 +1,13 @@
 "use client";
 
-import { auth } from "./firebaseClient";
+import { auth, googleProvider } from "./firebaseClient";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
     getIdToken,  
     GoogleAuthProvider,
-    // signInWithPopup
-    signInWithRedirect,
-    getRedirectResult
+    signInWithPopup,
 } from "firebase/auth";
 
 
@@ -34,15 +32,14 @@ export const signInWithEmail = async (email: string, password: string) => {
 }
 
 export const signUpWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  try{
-    await signInWithRedirect(auth, provider);
-  }catch (error) {
-    console.error("Google Redirect login failed:", error);
-    throw error;
-  }
- 
-};
+    const userCredential = await signInWithPopup(auth, googleProvider);
+    const token = await getIdToken(userCredential.user);
+    return {
+        email: userCredential.user.email,
+        uid: userCredential.user.uid,
+        token
+    };
+}
 
 export const signOutUser = async () => {
     await signOut(auth);

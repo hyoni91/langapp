@@ -3,10 +3,11 @@
 export const dynamic = "force-dynamic";
 
 
-import { signUpWithGoogle } from "@/lib/authClient";
 import { auth } from "@/lib/firebaseClient";
 import {
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -45,18 +46,17 @@ export default function LoginPage() {
   const loginWithGoogle = async () => {
   setLoading(true);
   setErr(null);
-
-  try {
-     await signUpWithGoogle();
-   // 리다이렉트 후 콜백 페이지에서 세션 발급 처리
-  } catch (e) {
-    console.error(e);
-    setErr("Googleログインに失敗しました。");
-  } finally {
-    setLoading(false);
-  }
-};
-
+try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      await issueSession();
+      router.replace(next);
+    } catch (e: unknown) {
+      console.error(e);
+      setErr("Failed to login with Google. Please try again later.");
+      setLoading(false);
+    }
+  };
 
 
   const loginWithEmail = async (e: React.FormEvent) => {
