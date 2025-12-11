@@ -8,7 +8,7 @@ import { auth } from "@/lib/firebaseClient";
 import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -47,18 +47,8 @@ export default function LoginPage() {
   setErr(null);
 
   try {
-    const googleUser = await signUpWithGoogle();
-
-    // 토큰이 여기서 바로 있지!
-    await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ idToken: googleUser.token }),
-    });
-
-    router.replace(next);
-
+     await signUpWithGoogle();
+   // 리다이렉트 후 콜백 페이지에서 세션 발급 처리
   } catch (e) {
     console.error(e);
     setErr("Googleログインに失敗しました。");
