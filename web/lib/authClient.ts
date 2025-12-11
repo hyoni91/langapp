@@ -7,7 +7,9 @@ import {
     signOut,
     getIdToken,  
     GoogleAuthProvider,
-    signInWithPopup
+    // signInWithPopup
+    signInWithRedirect,
+    getRedirectResult
 } from "firebase/auth";
 
 
@@ -34,17 +36,9 @@ export const signInWithEmail = async (email: string, password: string) => {
 export const signUpWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
   try{
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const token = await user.getIdToken();
-
-    return {
-      email: user.email,
-      uid: user.uid,
-      token,
-    };
+    await signInWithRedirect(auth, provider);
   }catch (error) {
-    console.error("Google popup login failed:", error);
+    console.error("Google Redirect login failed:", error);
     throw error;
   }
  
