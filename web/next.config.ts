@@ -1,18 +1,34 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: false,
+
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "via.placeholder.com",
       },
-      // 앞으로 쓸 예정이라면 같이 추가
-      // { protocol: "https", hostname: "firebasestorage.googleapis.com" },
-      // { protocol: "https", hostname: "images.unsplash.com" },
     ],
+  },
+
+  // ⭐ COOP / COEP を無効化
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "unsafe-none",
+          },
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "unsafe-none",
+          },
+        ],
+      },
+    ];
   },
 };
 
