@@ -1,10 +1,11 @@
-// import { KidButton } from "@/components/ui/KidButton";
 // import { KidCard } from "@/components/ui/KidCard";
 // import { KidHeader } from "@/components/ui/KidHeader";
 
 "use client";
-
+import Link from "next/link";
 import Image from "next/image";
+import { KidButton } from "@/components/ui/KidButton";
+
 
 export default function Home() {
   return (
@@ -74,6 +75,38 @@ export default function Home() {
           </div>
         </a>
       </section>
+
+      {/* ポストページへのリンク */}
+      <section className="mt-10 z-10">
+        <Link
+          href="/post"
+          className="
+            relative
+            inline-flex items-center
+            px-8 py-3 rounded-full
+            border-2 border-transparent
+            group
+          "
+        >
+          {/* 실제 테두리 */}
+          <span
+            className="
+              pointer-events-none
+              absolute inset-0 rounded-full
+              border-2 border-dashed border-black
+              transition-all duration-300
+              group-hover:border-4
+            "
+          />
+
+          <span className="relative z-10">
+            単語登録はこちら
+          </span>
+        </Link>
+      </section>
+
+
+
 
       {/* 동물 이미지들 */}
       <Image
