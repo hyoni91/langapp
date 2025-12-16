@@ -82,10 +82,22 @@ export default async function DashboardPage() {
             <KidButton asChild className="text-lg px-6 py-3">
               <Link href="/lesson">今日の単語を見る</Link>
             </KidButton>
-            <KidButton asChild className="bg-gray-800 hover:bg-gray-900 text-lg px-6 py-3">
+            <KidButton asChild className="bg-gray-800 text-lg px-6 py-3">
               <Link href="/audioQuiz">単語テストをする</Link>
             </KidButton>
           </div>
+          {/* <br className="my-8" />
+            <KidButton asChild className="bg-yellow-500 text-lg px-6 py-3">
+              <Link href="/post">投稿する</Link>
+            </KidButton> */}
+        </section>
+        {/* ポストページへのリンク */}
+        <section className="rounded-3xl shadow p-10 text-center">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-700">単語登録</h2>
+          <p className="mb-4">自分が撮った写真を登録して世界で一つだけの辞書を作ろう</p>
+          <KidButton asChild>
+            <Link href="/post">投稿する</Link>
+          </KidButton>
         </section>
       </div>
     </main>
