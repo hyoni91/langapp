@@ -91,7 +91,7 @@ export default function SettingTimer() {
   >
     <div className="flex justify-center items-center gap-3">
       <label htmlFor="minutes" className="font-medium text-lg">
-        時間:
+        {/* 時間： */}
       </label>
 
       <input
@@ -115,7 +115,7 @@ export default function SettingTimer() {
       <button
         type="submit"
         disabled={!canSave}
-        className="px-6 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-20 px-6 py-2.5 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "保存中..." : "保存"}
       </button>
