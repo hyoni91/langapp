@@ -22,6 +22,7 @@ export default async function DashboardPage() {
     // 初期設定前の安全処理
     return (
       <main className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 px-4">
+  
         <h1 className="text-2xl font-hachi">ようこそ 👋</h1>
         <p className="text-gray-600 text-center">
           初期設定を準備しています。<br />
@@ -79,17 +80,13 @@ export default async function DashboardPage() {
           </div>
 
           <div className="flex justify-center gap-6">
-            <KidButton asChild className="text-lg px-6 py-3">
-              <Link href="/lesson">今日の単語を見る</Link>
+            <KidButton asChild className="w-40  text-lg px-6 py-3">
+              <Link href="/lesson">今日の単語</Link>
             </KidButton>
-            <KidButton asChild className="bg-gray-800 text-lg px-6 py-3">
-              <Link href="/audioQuiz">単語テストをする</Link>
+            <KidButton asChild className="w-40  bg-gray-800 text-lg px-6 py-3">
+              <Link href="/audioQuiz">単語テスト</Link>
             </KidButton>
           </div>
-          {/* <br className="my-8" />
-            <KidButton asChild className="bg-yellow-500 text-lg px-6 py-3">
-              <Link href="/post">投稿する</Link>
-            </KidButton> */}
         </section>
         {/* ポストページへのリンク */}
         <section className="rounded-3xl shadow p-10 text-center">
@@ -100,6 +97,9 @@ export default async function DashboardPage() {
           </KidButton>
         </section>
       </div>
+        <div className="absolute top-4 left-10 text-lg">
+          <Link href="/">🏠</Link>
+        </div>
     </main>
   );
 }

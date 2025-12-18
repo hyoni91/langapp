@@ -2,10 +2,11 @@
 "use client"
 
 import { Tags, WordForm } from "@/types/word";
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebaseClient";
 import { useUser } from "@/context/UserContext";
+import Link from "next/link";
 
 type props ={
     wordId : string;
@@ -17,6 +18,10 @@ export default function WordEditor({wordId}:props){
   //React의 Hook(useState, useEffect 등)은 컴포넌트 최상위에서만 호출 가능
     const {uid} = useUser();
     const [allTags, setAllTags] = useState<Tags[]>([]);
+    const [isComposing, setIsComposing] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+
 
     const [form, setForm] = useState<WordForm>({
         jaSurface: "",
@@ -53,19 +58,28 @@ export default function WordEditor({wordId}:props){
             : [...prev.tags, tagName], // 아니면 남겨
         };
       });
+
     }, []);
 
-    //태그 추가
-    const addNewTag = (e : React.KeyboardEvent<HTMLInputElement>)=>{
-      if (e.key === "Enter" ){
-        e.preventDefault();
-        const value = e.currentTarget.value.trim();
-        if( value && !form.tags.includes(value)){
-          setForm((prev)=>({...prev, tags:[...prev.tags, value] }))
-        }
+
+
+    const addNewTag = (value: string) => {
+      console.log("▶ addNewTagMobile value:", value);
+      console.log("▶ before:", form.tags);
+      value = value.trim();
+      if (value && !form.tags.includes(value)) {
+        setForm((prev) => ({ ...prev, tags: [...prev.tags, value] }));
       }
+
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key !== "Enter" || isComposing) return;
+      e.preventDefault();
+      const value = e.currentTarget.value.trim();
+      addNewTag(value);
       e.currentTarget.value = "";
-    }
+    };
 
 
     const handleChange = (key: "jaSurface" | "koSurface", value: string) => {
@@ -148,7 +162,7 @@ export default function WordEditor({wordId}:props){
 
 
     return(
-    <div className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md space-y-6">
+    <div className="max-w-md mt-16 mx-auto p-6 bg-white rounded-2xl shadow-md space-y-6">
       {/* 사진 업로드 / 촬영 */}
         <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -229,11 +243,25 @@ export default function WordEditor({wordId}:props){
       </div>
         {/* 새 태그 추가 */}
       <input
+        ref={inputRef}
+        onCompositionStart={()=>setIsComposing(true)}
+        onCompositionEnd={()=>{setIsComposing(false)}}
         type="text"
-        placeholder="新しいタグを入力して Enter"
-        onKeyDown={addNewTag}
+        placeholder="タグ入力（Enter または ボタン）"
+        onKeyDown={handleKeyDown}
         className="w-full border rounded px-3 py-1"
       />
+      <button
+        type="button"
+        onClick={() => {
+          const value = inputRef.current?.value.trim() ?? "";
+          addNewTag(value);
+          if (inputRef.current) inputRef.current.value = "";
+        }}
+        className="mt-2 px-3 py-1 rounded bg-gray-200 border"
+      >
+        追加
+      </button>
       <div>選択中：
       {/* 선택된 태그 표시 */}
       {form.tags.length === 0 ? (
@@ -264,6 +292,9 @@ export default function WordEditor({wordId}:props){
         >
           保存
         </button>
+      </div>
+      <div>
+        <Link href="/" className="absolute top-4 left-10 text-lg">🏠</Link>
       </div>
     </div>
   );
