@@ -4,6 +4,7 @@
 import { LearnedWord, LearningCardData, LearningListData } from "@/types/lesson";
 import { useEffect, useState } from "react";
 import { TagFilter } from "../ui/TagFilter";
+import { getVoices } from "@/lib/tts";
 
 
 export default function LearningCard() {
@@ -33,16 +34,21 @@ export default function LearningCard() {
   }, [selectedTag]); 
 
   // 순차 TTS 재생 함수 
-  const speakTextsSequentially = (items : { word : string; lang : string }[]) => {
+  const speakTextsSequentially = async (items : { word : string; lang : string }[]) => {
     if (items.length === 0) return;
     
     // 현재 재생 중인 음성이 있으면 취소
     window.speechSynthesis.cancel();
 
-    const utter = new SpeechSynthesisUtterance(items[0].word);
-    utter.lang = items[0].lang;
-    utter.rate = 0.5; // 속도 조절 (0.1 ~ 10)
-    utter.pitch = 1; // 음높이 조절 (0 ~ 2)
+    const voices = await getVoices();
+    const current = items[0];
+    const utter = new SpeechSynthesisUtterance(current.word);
+    utter.lang = current.lang;
+
+    utter.voice= voices.find((v)=> v.lang === current.lang) ?? null;
+
+    utter.rate = 0.4; // 속도 조절 (0.1 ~ 10)
+    utter.pitch = 1.1; // 음높이 조절 (0 ~ 2)
 
     // 발음이 끝난 후 다음 단어 재생
     utter.onend = () => {
@@ -57,8 +63,8 @@ export default function LearningCard() {
 
     // TTS 재생용 배열 구성 
     const ttsItems = [
-      { word: cardItem.ja, lang: "ja" },
-      { word: cardItem.ko, lang: "ko" },
+      { word: cardItem.ja, lang: "ja-JP" },
+      { word: cardItem.ko, lang: "ko-KR" },
     ];
     speakTextsSequentially(ttsItems); 
   };
