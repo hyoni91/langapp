@@ -1,6 +1,8 @@
 "use client";
 
 import { auth, googleProvider } from "./firebaseClient";
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -31,6 +33,8 @@ export const signInWithEmail = async (email: string, password: string) => {
 }
 
 export const signUpWithGoogle = async () => {
+    await setPersistence(auth, browserLocalPersistence);
+    
     const userCredential = await signInWithPopup(auth, googleProvider);
     const token = await getIdToken(userCredential.user);
     return {

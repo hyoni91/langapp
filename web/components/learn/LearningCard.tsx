@@ -69,37 +69,6 @@ export default function LearningCard() {
     speakTextsSequentially(ttsItems); 
   };
 
-  // 학습완료 처리 함수 (아직 사용 안함)
-  const handleLearned = (cardItem: LearningCardData) => {
-
-    if (learnedWords.some(w => w.id === cardItem.id)) return; // 먼저 중복 체크
-
-    const newLearnedWord: LearnedWord = {
-      id: cardItem.id,
-      action: "learn",
-      lang: "ja",
-    };
-    setLearnedWords((prev) => [...prev, newLearnedWord]);
-
-    // 서버에 학습 이벤트 기록
-    fetch('/api/study-event', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ wordId: cardItem.id, action: "learn", lang: "ja" }),
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('学習イベントの記録に失敗しました');
-      return res.json();
-    })
-    .then(data => {
-      console.log('学習イベントが記録されました:', data);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  };
-
-
 
   return (
     <>
