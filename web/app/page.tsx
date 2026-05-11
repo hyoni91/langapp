@@ -110,18 +110,18 @@ export default function Home() {
 
       {/* 동물 이미지들 */}
       <Image
-        src="/animals/giraffe.png"
-        alt="기린"
+        src="/animals/kuma.png"
+        alt="くま"
         width={160}
         height={160}
-        className="absolute bottom-0 left-4 sm:left-10"
+        className="absolute bottom-0 left-1.5 w-28  md:left-12 md:absolute md:bottom-0" 
       />
       <Image
-        src="/animals/lion.png"
-        alt="사자"
+        src="/animals/usagi.png"
+        alt="うさぎ"
         width={180}
         height={180}
-        className="absolute top-20 right-4 sm:right-12"
+        className="absolute top-6 right-1 w-32 md:w-24"
       />
     </main>
   );

@@ -7,7 +7,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 const Ctx = createContext<TimerCtx | null>(null);
 
 export default function TimerProvider({ children }: { children: React.ReactNode }) {
-    const [durationMs, setDurationMs] = useState(20  * 60_000); // 초기값 (밀리초)
+    const [durationMs, setDurationMs] = useState(20  * 60_000); // 초기값 (밀리초) 20분 * 60_000(60초) = 1,200,000ms
     const [remainingMs, setRemainingMs] = useState(durationMs); // 남은 시간(밀리초)
     const [status, setStatus] = useState<Status>("idle"); //idle = 초기, running = 진행중, paused = 일시정지
     const [endAtMs , setEndAtMs] = useState<number | null>(null); 

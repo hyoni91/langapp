@@ -21,24 +21,9 @@ export default function AudioQuizPage() {
         <AudioQuiz />
       </div>
 
-      {/* 정글 장식 이미지들  */}
       <Image
-        src="/animals/monkeys.png"
-        alt="원숭이"
-        width={160}
-        height={160}
-        className="absolute top-8 left-6 opacity-90"
-      />
-      <Image
-        src="/animals/snake.png"
-        alt="뱀"
-        width={130}
-        height={130}
-        className="absolute bottom-10 right-10 opacity-90"
-      />
-      <Image
-        src="/animals/pond.png"
-        alt="연못"
+        src="/animals/tori.png"
+        alt="とり"
         width={150}
         height={150}
         className="absolute bottom-0 left-12 opacity-90"
