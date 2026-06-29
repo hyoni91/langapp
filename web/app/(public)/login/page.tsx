@@ -22,26 +22,27 @@ export default function LoginPage() {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
-  //session 発行
   const issueSession = async () => {
-    const idToken = await auth.currentUser?.getIdToken(true);
-    if (!idToken) throw new Error("ID token not found");
-    const res = await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // Set-Cookie 
-      body: JSON.stringify({ idToken }),
-    });
+  const idToken = await auth.currentUser?.getIdToken(true);
+  if (!idToken) throw new Error("ID token not found");
 
-    await fetch("/api/users/sync", {
+  const res = await fetch("/api/auth/session", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
+    body: JSON.stringify({ idToken }),
   });
-  
-    if (!res.ok) {
-      throw new Error("Failed to issue session.");
-    }
-  };
+
+  console.log("session status:", res.status);
+
+  const text = await res.text();
+  console.log("session response:", text);
+
+  if (!res.ok) {
+    throw new Error("Failed to issue session.");
+  }
+};
+
 
   const loginWithGoogle = async () => {
   setLoading(true);
