@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     value: sessionCookie,
     httpOnly: true, // JS로 접근 불가
     secure: true, 
-    sameSite: "none",                             
+    sameSite: "none",                        
     path: "/", // 전체 경로에 쿠키 유효
     maxAge: COOKIE_MAXAGE, 
                       
