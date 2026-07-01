@@ -10,6 +10,7 @@ import { KidButton } from "@/components/ui/KidButton";
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-sky-400 flex flex-col items-center justify-center text-center overflow-hidden">
+    
       {/* 상단 텍스트 */}
       <h1 className="text-3xl md:text-5xl font-bold text-black mt-2">
         世界でたった一つの

@@ -35,14 +35,15 @@ export async function POST(req: NextRequest) {
 }
 
 
+//세션 쿠키 삭제(로그아웃)
 export async function DELETE() {
   const cookieStore = await cookies();
   cookieStore.set("session", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  maxAge: 0, // 즉시 만료
+});
   return NextResponse.json({ ok: true });
 }
